@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
-import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
+import { CATEGORIES, categoryLabel, paperColor, type Category } from "@/lib/categories";
 import { Calendar, MapPin, Users, Heart, X } from "lucide-react";
 
 type Plan = {
@@ -21,6 +21,7 @@ type Plan = {
   company_name: string | null;
   creator?: { name: string; avatar_url: string | null } | null;
   going?: number;
+  attendees?: { name: string; avatar_url: string | null }[];
 };
 
 type Ad = { id: string; company_name: string; title: string; message: string; kind: "ad" };
@@ -61,21 +62,36 @@ function Discover() {
       : { data: [] as { id: string; name: string; avatar_url: string | null }[] };
     const pmap = new Map((profs ?? []).map((p) => [p.id, p]));
 
-    // counts
+    // counts + attendee sample for avatar stack
     const counts = new Map<string, number>();
+    const attendeeIdsByPlan = new Map<string, string[]>();
     if (filtered.length) {
       const { data: pp } = await supabase
         .from("plan_participants")
-        .select("plan_id")
+        .select("plan_id, user_id")
         .in("plan_id", filtered.map((f) => f.id));
-      (pp ?? []).forEach((r) => counts.set(r.plan_id, (counts.get(r.plan_id) ?? 0) + 1));
+      (pp ?? []).forEach((r) => {
+        counts.set(r.plan_id, (counts.get(r.plan_id) ?? 0) + 1);
+        const arr = attendeeIdsByPlan.get(r.plan_id) ?? [];
+        if (arr.length < 4) arr.push(r.user_id);
+        attendeeIdsByPlan.set(r.plan_id, arr);
+      });
     }
+    const attendeeIds = Array.from(new Set(Array.from(attendeeIdsByPlan.values()).flat()));
+    const { data: attendeeProfs } = attendeeIds.length
+      ? await supabase.from("profiles").select("id, name, avatar_url").in("id", attendeeIds)
+      : { data: [] as { id: string; name: string; avatar_url: string | null }[] };
+    const attendeeMap = new Map((attendeeProfs ?? []).map((p) => [p.id, p]));
 
     const planItems: FeedItem[] = filtered.map((p) => ({
       ...p,
       kind: "plan" as const,
       creator: pmap.get(p.creator_id) ?? null,
       going: counts.get(p.id) ?? 0,
+      attendees: (attendeeIdsByPlan.get(p.id) ?? [])
+        .map((uid) => attendeeMap.get(uid))
+        .filter((p): p is { id: string; name: string; avatar_url: string | null } => !!p)
+        .map((p) => ({ name: p.name, avatar_url: p.avatar_url })),
     }));
 
     // intercalar anuncios cada ~7 cartas
@@ -131,11 +147,17 @@ function Discover() {
       <div className="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4">
         <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="Todo" emoji="✨" />
         {CATEGORIES.map((c) => (
-          <FilterChip key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)} label={c.label} emoji={c.emoji} />
+          <FilterChip key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)} label={c.label} emoji={c.emoji} tint={c.paperVar} />
         ))}
       </div>
 
       <div className="relative h-[520px] mt-3">
+        {items && items.length > 0 && items[0].kind === "plan" && (
+          <div
+            className="absolute inset-x-8 top-10 h-[460px] rounded-full blur-3xl opacity-50 pointer-events-none"
+            style={{ backgroundColor: paperColor(items[0].category), zIndex: 0 }}
+          />
+        )}
         {items === null && (
           <p className="text-center text-amber-50/80 mt-20">Cargando planes…</p>
         )}
@@ -178,14 +200,16 @@ function Discover() {
   );
 }
 
-function FilterChip({ active, onClick, label, emoji }: { active: boolean; onClick: () => void; label: string; emoji: string }) {
+function FilterChip({ active, onClick, label, emoji, tint }: { active: boolean; onClick: () => void; label: string; emoji: string; tint?: string }) {
+  const activeBg = tint ?? "var(--pin)";
+  const activeFg = tint ? "var(--ink)" : "#FFF8E7";
   return (
     <button
       onClick={onClick}
       className="rubber-button shrink-0 text-sm"
       style={{
-        backgroundColor: active ? "var(--pin)" : "#FFF8E7",
-        color: active ? "#FFF8E7" : "var(--ink)",
+        backgroundColor: active ? activeBg : "#FFF8E7",
+        color: active ? activeFg : "var(--ink)",
       }}
     >
       {emoji} {label}
@@ -233,9 +257,15 @@ function SwipeCard({
 
 function PlanCard({ plan }: { plan: Plan & { kind: "plan" } }) {
   return (
-    <PaperNote category={plan.category} rotation={-1.5} className="h-[500px] flex flex-col">
+    <PaperNote
+      category={plan.category}
+      rotation={-1.5}
+      className="h-[500px] flex flex-col"
+      attendees={plan.attendees}
+      attendeesTotal={plan.going}
+    >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-bold uppercase tracking-wider opacity-70">
+        <span className="text-sm font-bold uppercase tracking-[0.15em] opacity-70">
           {categoryLabel(plan.category)}
         </span>
         {plan.is_hosted && (
@@ -244,7 +274,7 @@ function PlanCard({ plan }: { plan: Plan & { kind: "plan" } }) {
           </span>
         )}
       </div>
-      <h2 className="text-4xl leading-tight">{plan.title}</h2>
+      <h2 className="text-[2.75rem] leading-[1.05]">{plan.title}</h2>
       <p className="mt-3 text-base flex-1 overflow-hidden">{plan.description}</p>
 
       <div className="mt-3 space-y-1.5 text-sm">
