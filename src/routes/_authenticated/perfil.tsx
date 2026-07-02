@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
+import { Camera } from "lucide-react";
 
 type Profile = {
   id: string; name: string; age: number | null; city: string | null; bio: string | null;
@@ -18,6 +19,7 @@ function ProfilePage() {
   const navigate = useNavigate();
   const [p, setP] = useState<Profile | null>(null);
   const [companyName, setCompanyName] = useState("");
+  const [uploading, setUploading] = useState(false);
 
   async function load() {
     const { data } = await supabase.from("profiles")
@@ -27,6 +29,36 @@ function ProfilePage() {
     setCompanyName(data?.company_name ?? "");
   }
   useEffect(() => { load(); }, [userId]);
+
+  async function handleAvatarChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    if (!file.type.startsWith("image/")) {
+      alert("Elige un archivo de imagen (jpg, png…)");
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      alert("La imagen no puede pesar más de 5 MB");
+      return;
+    }
+    setUploading(true);
+    try {
+      const ext = file.name.split(".").pop() || "jpg";
+      const path = `${userId}/avatar.${ext}`;
+      const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, { upsert: true });
+      if (upErr) throw upErr;
+      const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+      const url = `${pub.publicUrl}?t=${Date.now()}`;
+      await supabase.from("profiles").update({ avatar_url: url }).eq("id", userId);
+      await load();
+    } catch (err) {
+      console.error(err);
+      alert("No se pudo subir la foto. Inténtalo de nuevo.");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function toggleHost() {
     if (!p) return;
@@ -53,11 +85,33 @@ function ProfilePage() {
     <div className="p-5 max-w-md mx-auto space-y-4">
       <PaperNote category="idiomas" rotation={-1}>
         <div className="flex items-center gap-3">
-          {p.avatar_url ? (
-            <img src={p.avatar_url} alt="" className="w-20 h-20 rounded-full object-cover border-2 border-[var(--ink)]/30" />
-          ) : (
-            <div className="w-20 h-20 rounded-full bg-white/70 flex items-center justify-center text-2xl">👤</div>
-          )}
+          <div className="relative w-20 h-20 shrink-0">
+            <label className="cursor-pointer block w-20 h-20 rounded-full overflow-hidden border-2 border-[var(--ink)]/30 relative">
+              {p.avatar_url ? (
+                <img src={p.avatar_url} alt="" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full bg-white/70 flex items-center justify-center text-2xl">👤</div>
+              )}
+              {uploading && (
+                <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                  <span className="text-white text-xs">…</span>
+                </div>
+              )}
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                disabled={uploading}
+                onChange={handleAvatarChange}
+              />
+            </label>
+            <span
+              className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center border-2"
+              style={{ backgroundColor: "var(--pin)", borderColor: "#FFF8E7" }}
+            >
+              <Camera size={14} color="#FFF8E7" />
+            </span>
+          </div>
           <div>
             <h1 className="text-3xl">{p.name}{p.age ? `, ${p.age}` : ""}</h1>
             <p className="text-sm">📍 {p.city}</p>
