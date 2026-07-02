@@ -27,7 +27,11 @@ function PlanDetail() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [joined, setJoined] = useState(false);
-  const [icebreaker] = useState(randomIcebreaker);
+  const [icebreaker, setIcebreaker] = useState(randomIcebreaker);
+
+  useEffect(() => {
+    setIcebreaker(randomIcebreaker());
+  }, [id]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
