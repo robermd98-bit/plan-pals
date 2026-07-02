@@ -5,6 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { CATEGORIES, categoryLabel, paperColor, type Category } from "@/lib/categories";
+import { joinPlan } from "@/lib/joinPlan";
 import { Calendar, MapPin, Users, Heart, X } from "lucide-react";
 
 type Plan = {
@@ -131,8 +132,8 @@ function Discover() {
     }
     if (action === "join") {
       setConfirmingId(item.id);
-      const insertPromise = supabase.from("plan_participants").insert({ plan_id: item.id, user_id: userId });
-      await Promise.all([insertPromise, new Promise((r) => setTimeout(r, 2000))]);
+      const joinPromise = joinPlan(item.id, userId);
+      await Promise.all([joinPromise, new Promise((r) => setTimeout(r, 2000))]);
       navigate({ to: "/plan/$id", params: { id: item.id } });
       return;
     }

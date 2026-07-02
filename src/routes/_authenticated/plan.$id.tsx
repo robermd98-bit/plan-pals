@@ -5,6 +5,7 @@ import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { categoryEmoji, categoryLabel } from "@/lib/categories";
 import { randomIcebreaker } from "@/lib/icebreakers";
+import { joinPlan, JOIN_SYSTEM_MARK } from "@/lib/joinPlan";
 import { ArrowLeft, Send } from "lucide-react";
 
 type Plan = {
@@ -83,7 +84,7 @@ function PlanDetail() {
   }
 
   async function join() {
-    await supabase.from("plan_participants").insert({ plan_id: id, user_id: userId });
+    await joinPlan(id, userId);
     setJoined(true);
   }
 
@@ -133,6 +134,24 @@ function PlanDetail() {
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 mt-2 space-y-2">
         {messages.map((m) => {
+          if (m.text === JOIN_SYSTEM_MARK) {
+            const author = participants.find((p) => p.id === m.sender_id);
+            return (
+              <div key={m.id} className="flex justify-center my-1">
+                <span
+                  className="text-xs px-3 py-1 rounded-full text-center"
+                  style={{
+                    backgroundColor: "rgba(255,248,231,0.6)",
+                    color: "var(--ink)",
+                    fontFamily: "var(--font-hand)",
+                    fontSize: 15,
+                  }}
+                >
+                  👋 {author?.name ?? "Alguien"} se ha unido a la cuadrilla
+                </span>
+              </div>
+            );
+          }
           const own = m.sender_id === userId;
           const author = participants.find((p) => p.id === m.sender_id);
           return (
@@ -145,7 +164,7 @@ function PlanDetail() {
             </div>
           );
         })}
-        {messages.length === 0 && (
+        {messages.every((m) => m.text === JOIN_SYSTEM_MARK) && (
           <p className="text-amber-50/70 text-center text-sm mt-6">{icebreaker}</p>
         )}
       </div>
