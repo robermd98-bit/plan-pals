@@ -54,7 +54,8 @@ function ProfilePage() {
       await load();
     } catch (err) {
       console.error(err);
-      alert("No se pudo subir la foto. Inténtalo de nuevo.");
+      const msg = err instanceof Error ? err.message : String(err);
+      alert(`No se pudo subir la foto: ${msg}`);
     } finally {
       setUploading(false);
     }
