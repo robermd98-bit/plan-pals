@@ -1,4 +1,5 @@
 import { type ReactNode, type CSSProperties } from "react";
+import { motion } from "framer-motion";
 import { paperColor, washiColor } from "@/lib/categories";
 
 export interface NoteAttendee {
@@ -17,6 +18,8 @@ interface PaperNoteProps {
   onClick?: () => void;
   attendees?: NoteAttendee[];
   attendeesTotal?: number;
+  confirming?: boolean;
+  confirmLabel?: string;
 }
 
 const AVATAR_TINTS = ["#E76F51", "#2A9D8F", "#E9C46A", "#6D597A", "#457B9D", "#F4A261"];
@@ -62,6 +65,27 @@ function AttendeeStack({ attendees, total }: { attendees: NoteAttendee[]; total?
   );
 }
 
+function ConfirmStamp({ label }: { label: string }) {
+  return (
+    <motion.div
+      className="absolute inset-0 z-30 flex items-center justify-center rounded-sm"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      style={{ backgroundColor: "rgba(255,248,231,0.55)" }}
+    >
+      <motion.div
+        initial={{ scale: 2.4, opacity: 0, rotate: -8 }}
+        animate={{ scale: 1, opacity: 1, rotate: -8 }}
+        transition={{ type: "spring", stiffness: 360, damping: 16 }}
+        className="rubber-button text-2xl"
+        style={{ backgroundColor: "var(--pin)", color: "#FFF8E7" }}
+      >
+        {label}
+      </motion.div>
+    </motion.div>
+  );
+}
+
 export function PaperNote({
   category = "social",
   rotation = -2,
@@ -73,6 +97,8 @@ export function PaperNote({
   onClick,
   attendees,
   attendeesTotal,
+  confirming = false,
+  confirmLabel = "¡Hecho!",
 }: PaperNoteProps) {
   return (
     <div
@@ -92,6 +118,7 @@ export function PaperNote({
       {attendees && attendees.length > 0 && (
         <AttendeeStack attendees={attendees} total={attendeesTotal} />
       )}
+      {confirming && <ConfirmStamp label={confirmLabel} />}
     </div>
   );
 }

@@ -16,7 +16,7 @@ export const RubberButton = forwardRef<HTMLButtonElement, Props>(
     return (
       <button
         ref={ref}
-        className={`rubber-button active:rubber-button-active text-lg ${className}`}
+        className={`rubber-button active:rubber-button-active disabled:opacity-40 disabled:pointer-events-none text-lg ${className}`}
         style={{ backgroundColor: bg, color: fg, ...style }}
         {...rest}
       />

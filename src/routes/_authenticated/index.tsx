@@ -36,6 +36,7 @@ function Discover() {
   const navigate = useNavigate();
   const [filter, setFilter] = useState<Category | "all">("all");
   const [items, setItems] = useState<FeedItem[] | null>(null);
+  const [confirmingId, setConfirmingId] = useState<string | null>(null);
 
   async function load() {
     // joined plan ids to exclude
@@ -122,13 +123,16 @@ function Discover() {
   }, [filter]);
 
   async function handleAction(item: FeedItem, action: "join" | "skip") {
+    if (confirmingId) return; // evita doble toque mientras se confirma
     if (item.kind === "ad") {
       await supabase.rpc("increment_ad_impression", { ad_id: item.id });
       setItems((prev) => prev?.slice(1) ?? null);
       return;
     }
     if (action === "join") {
-      await supabase.from("plan_participants").insert({ plan_id: item.id, user_id: userId });
+      setConfirmingId(item.id);
+      const insertPromise = supabase.from("plan_participants").insert({ plan_id: item.id, user_id: userId });
+      await Promise.all([insertPromise, new Promise((r) => setTimeout(r, 650))]);
       navigate({ to: "/plan/$id", params: { id: item.id } });
       return;
     }
@@ -180,6 +184,7 @@ function Discover() {
                 isTop={isTop}
                 stackIndex={arr.length - 1 - idx}
                 onSwipe={(action) => handleAction(it, action)}
+                confirming={isTop && it.id === confirmingId}
               />
             );
           })}
@@ -188,10 +193,10 @@ function Discover() {
 
       {items && items.length > 0 && items[0].kind === "plan" && (
         <div className="flex justify-center gap-6 mt-4">
-          <RubberButton tone="paper" onClick={() => handleAction(items[0], "skip")}>
+          <RubberButton tone="paper" disabled={!!confirmingId} onClick={() => handleAction(items[0], "skip")}>
             <X className="inline -mt-1" size={20} /> Paso
           </RubberButton>
-          <RubberButton onClick={() => handleAction(items[0], "join")}>
+          <RubberButton disabled={!!confirmingId} onClick={() => handleAction(items[0], "join")}>
             <Heart className="inline -mt-1" size={20} /> Me apunto
           </RubberButton>
         </div>
@@ -222,11 +227,13 @@ function SwipeCard({
   isTop,
   stackIndex,
   onSwipe,
+  confirming = false,
 }: {
   item: FeedItem;
   isTop: boolean;
   stackIndex: number;
   onSwipe: (action: "join" | "skip") => void;
+  confirming?: boolean;
 }) {
   const x = useMotionValue(0);
   const rotate = useTransform(x, [-200, 200], [-18, 18]);
@@ -243,19 +250,19 @@ function SwipeCard({
         scale: 1 - stackIndex * 0.04,
         y: stackIndex * 10,
       }}
-      drag={isTop ? "x" : false}
+      drag={isTop && !confirming ? "x" : false}
       dragConstraints={{ left: 0, right: 0 }}
       onDragEnd={(_, info) => {
         if (info.offset.x > 120) onSwipe("join");
         else if (info.offset.x < -120) onSwipe("skip");
       }}
     >
-      {item.kind === "ad" ? <AdCard ad={item} /> : <PlanCard plan={item} />}
+      {item.kind === "ad" ? <AdCard ad={item} /> : <PlanCard plan={item} confirming={confirming} />}
     </motion.div>
   );
 }
 
-function PlanCard({ plan }: { plan: Plan & { kind: "plan" } }) {
+function PlanCard({ plan, confirming = false }: { plan: Plan & { kind: "plan" }; confirming?: boolean }) {
   return (
     <PaperNote
       category={plan.category}
@@ -263,6 +270,8 @@ function PlanCard({ plan }: { plan: Plan & { kind: "plan" } }) {
       className="h-[500px] flex flex-col"
       attendees={plan.attendees}
       attendeesTotal={plan.going}
+      confirming={confirming}
+      confirmLabel="💌 ¡Apuntado!"
     >
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-bold uppercase tracking-[0.15em] opacity-70">
