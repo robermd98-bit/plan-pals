@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { categoryEmoji, categoryLabel } from "@/lib/categories";
+import { randomIcebreaker } from "@/lib/icebreakers";
 import { ArrowLeft, Send } from "lucide-react";
 
 type Plan = {
@@ -26,6 +27,7 @@ function PlanDetail() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [text, setText] = useState("");
   const [joined, setJoined] = useState(false);
+  const [icebreaker] = useState(randomIcebreaker);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -140,7 +142,7 @@ function PlanDetail() {
           );
         })}
         {messages.length === 0 && (
-          <p className="text-amber-50/70 text-center text-sm mt-6">Sé el primero en romper el hielo</p>
+          <p className="text-amber-50/70 text-center text-sm mt-6">{icebreaker}</p>
         )}
       </div>
 

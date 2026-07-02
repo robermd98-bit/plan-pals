@@ -1,0 +1,36 @@
+export const ICEBREAKERS: string[] = [
+  "Sé el primero en romper el hielo",
+  "Aquí no muerde nadie. Dilo tú primero.",
+  "Este chat está más vacío que la nevera en domingo. Anímate.",
+  "Todos están esperando a que alguien hable. Sé esa persona.",
+  "Un simple \"¡hola!\" ya cuenta. En serio.",
+  "El silencio incómodo no existe si escribes tú primero.",
+  "Pregunta algo random y verás cómo aparece gente.",
+  "Este plan todavía no tiene voz. Préstale la tuya.",
+  "Nadie ha escrito nada aún. Toda leyenda empieza así.",
+  "Cuenta algo tonto. Nunca falla para romper el hielo.",
+  "¿Y si preguntas quién más llega con ganas?",
+  "El primer mensaje siempre es el más raro. Quítatelo de encima.",
+  "Vacío por ahora. Tú puedes cambiarlo con una frase.",
+  "Preséntate como quieras: nombre, chiste malo, o ambos.",
+  "Manda un mensaje y gánate el título de rompehielos oficial.",
+  "Un \"¿quién llega antes?\" siempre arranca conversación.",
+  "Este chat te está mirando fijamente. Dile algo.",
+  "Nadie se va a reír de tu primer mensaje. Bueno, un poco, pero con cariño.",
+  "Todo grupo necesita a alguien valiente. Postúlate.",
+  "Aún no hay mensajes. Aún no hay excusas.",
+  "Empieza con algo tan simple como \"qué ganas de esto\".",
+  "El hielo no se rompe solo, dale un empujón.",
+  "Todos están un poco nerviosos. Escribe igual.",
+  "Una pregunta random rompe más hielo que un \"hola\" seco.",
+  "Aquí empieza la quedada de verdad: con un mensaje tuyo.",
+  "Nadie ha roto el hielo todavía. El trofeo está libre.",
+  "Nunca sabrás si conectáis si nadie escribe primero.",
+  "Nada de discursos elaborados: con un \"eyy\" alcanza.",
+  "El chat está en modo espera. Sácalo de ahí.",
+  "Todo empieza con una frase random. Esta puede ser la tuya.",
+];
+
+export function randomIcebreaker(): string {
+  return ICEBREAKERS[Math.floor(Math.random() * ICEBREAKERS.length)];
+}
