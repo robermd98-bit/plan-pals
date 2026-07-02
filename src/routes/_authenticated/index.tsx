@@ -132,7 +132,7 @@ function Discover() {
     if (action === "join") {
       setConfirmingId(item.id);
       const insertPromise = supabase.from("plan_participants").insert({ plan_id: item.id, user_id: userId });
-      await Promise.all([insertPromise, new Promise((r) => setTimeout(r, 1500))]);
+      await Promise.all([insertPromise, new Promise((r) => setTimeout(r, 2000))]);
       navigate({ to: "/plan/$id", params: { id: item.id } });
       return;
     }
