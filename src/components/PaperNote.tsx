@@ -20,6 +20,7 @@ interface PaperNoteProps {
   attendeesTotal?: number;
   confirming?: boolean;
   confirmLabel?: string;
+  pulsing?: boolean;
 }
 
 const AVATAR_TINTS = ["#E76F51", "#2A9D8F", "#E9C46A", "#6D597A", "#457B9D", "#F4A261"];
@@ -65,16 +66,26 @@ function AttendeeStack({ attendees, total }: { attendees: NoteAttendee[]; total?
   );
 }
 
-export function PulseRings({ color = "var(--pin)", count = 3 }: { color?: string; count?: number }) {
+export function PulseRings({
+  color = "var(--pin)",
+  count = 3,
+  rounded = "rounded-sm",
+  expand = 1.06,
+}: {
+  color?: string;
+  count?: number;
+  rounded?: string;
+  expand?: number;
+}) {
   return (
     <>
       {Array.from({ length: count }).map((_, i) => (
         <motion.span
           key={i}
-          className="absolute inset-0 rounded-xl pointer-events-none"
+          className={`absolute inset-0 ${rounded} pointer-events-none`}
           style={{ border: `2px solid ${color}` }}
-          initial={{ opacity: 0.5, scale: 1 }}
-          animate={{ opacity: 0, scale: 1.16 }}
+          initial={{ opacity: 0.55, scale: 1 }}
+          animate={{ opacity: 0, scale: expand }}
           transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.55, ease: "easeOut" }}
         />
       ))}
@@ -126,6 +137,7 @@ export function PaperNote({
   attendeesTotal,
   confirming = false,
   confirmLabel = "¡Hecho!",
+  pulsing = false,
 }: PaperNoteProps) {
   return (
     <div
@@ -139,6 +151,7 @@ export function PaperNote({
         ...style,
       }}
     >
+      {pulsing && <PulseRings color={washiColor(category)} />}
       {pin && <span className="pin-dot" />}
       {tape && <span className="tape-corner" style={{ background: washiColor(category) }} />}
       {children}

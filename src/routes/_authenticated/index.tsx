@@ -2,9 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { PaperNote, PulseRings } from "@/components/PaperNote";
+import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
-import { CATEGORIES, categoryLabel, paperColor, washiColor, type Category } from "@/lib/categories";
+import { CATEGORIES, categoryLabel, paperColor, type Category } from "@/lib/categories";
 import { joinPlan } from "@/lib/joinPlan";
 import { Calendar, MapPin, Users, Heart, X } from "lucide-react";
 
@@ -273,6 +273,7 @@ function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { 
       attendeesTotal={plan.going}
       confirming={confirming}
       confirmLabel="💌 ¡Apuntado!"
+      pulsing={isTop && !confirming}
     >
       <div className="flex items-center justify-between mb-2">
         <span className="text-sm font-bold uppercase tracking-[0.15em] opacity-70">
@@ -284,10 +285,7 @@ function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { 
           </span>
         )}
       </div>
-      <h2 className="relative text-[2.75rem] leading-[1.05] inline-block">
-        {isTop && !confirming && <PulseRings color={washiColor(plan.category)} />}
-        <span className="relative">{plan.title}</span>
-      </h2>
+      <h2 className="text-[2.75rem] leading-[1.05]">{plan.title}</h2>
       <p className="mt-3 text-base flex-1 overflow-hidden">{plan.description}</p>
 
       <div className="mt-3 space-y-1.5 text-sm">
