@@ -80,7 +80,7 @@ function ProfilePage() {
     navigate({ to: "/auth" });
   }
 
-  if (!p) return <div className="p-5 text-amber-50">Cargando…</div>;
+  if (!p) return <div className="p-5 text-[var(--ink)]">Cargando…</div>;
 
   return (
     <div className="p-5 max-w-md mx-auto space-y-4">
@@ -108,9 +108,9 @@ function ProfilePage() {
             </label>
             <span
               className="absolute -bottom-1 -right-1 w-7 h-7 rounded-full flex items-center justify-center border-2"
-              style={{ backgroundColor: "var(--pin)", borderColor: "#FFF8E7" }}
+              style={{ backgroundColor: "var(--pin)", borderColor: "#FFFFFF" }}
             >
-              <Camera size={14} color="#FFF8E7" />
+              <Camera size={14} color="var(--pin-foreground)" />
             </span>
           </div>
           <div>
@@ -155,7 +155,7 @@ function ProfilePage() {
         </RubberButton>
       )}
 
-      <button onClick={logout} className="block mx-auto text-amber-50/80 underline text-sm mt-6">
+      <button onClick={logout} className="block mx-auto text-[var(--ink)]/80 underline text-sm mt-6">
         Cerrar sesión
       </button>
     </div>

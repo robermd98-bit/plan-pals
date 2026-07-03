@@ -24,7 +24,7 @@ function ProfilePage() {
     })();
   }, [id]);
 
-  if (!p) return <div className="p-5 text-amber-50">Cargando…</div>;
+  if (!p) return <div className="p-5 text-[var(--ink)]">Cargando…</div>;
 
   return (
     <div className="p-5 max-w-md mx-auto">
@@ -41,7 +41,7 @@ function ProfilePage() {
           {p.interests?.length > 0 && (
             <div className="flex flex-wrap gap-2 justify-center mt-2">
               {p.interests.map((i) => (
-                <span key={i} className="rubber-button text-xs" style={{ backgroundColor: "#FFF8E7", color: "var(--ink)" }}>
+                <span key={i} className="rubber-button text-xs" style={{ backgroundColor: "#FFFFFF", color: "var(--ink)" }}>
                   {i}
                 </span>
               ))}

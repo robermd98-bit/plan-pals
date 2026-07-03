@@ -43,7 +43,7 @@ function AuthShell() {
   if (!checked) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <p style={{ fontFamily: "var(--font-hand)", fontSize: 24, color: "#FFF8E7" }}>
+        <p style={{ fontSize: 18, fontWeight: 600, color: "var(--ink)" }}>
           Cargando…
         </p>
       </div>

@@ -68,10 +68,10 @@ function Onboarding() {
 
   return (
     <div className="p-5 max-w-md mx-auto">
-      <h1 className="text-center text-4xl mt-4" style={{ color: "#FFF8E7" }}>
+      <h1 className="text-center text-4xl mt-4" style={{ color: "var(--ink)" }}>
         ¡Cuelga tu nota!
       </h1>
-      <p className="text-center text-amber-50/90 -mt-1 mb-4">
+      <p className="text-center text-[var(--ink)]/90 -mt-1 mb-4">
         Cuéntanos de ti para empezar
       </p>
 
@@ -113,8 +113,8 @@ function Onboarding() {
                   <button type="button" key={c.id} onClick={() => toggle(c.id)}
                     className="rubber-button text-sm"
                     style={{
-                      backgroundColor: on ? "var(--pin)" : "#FFF8E7",
-                      color: on ? "#FFF8E7" : "var(--ink)",
+                      backgroundColor: on ? "var(--pin)" : "#FFFFFF",
+                      color: on ? "var(--pin-foreground)" : "var(--ink)",
                     }}
                   >
                     {c.emoji} {c.label}

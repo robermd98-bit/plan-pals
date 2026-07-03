@@ -10,14 +10,15 @@ export const RubberButton = forwardRef<HTMLButtonElement, Props>(
       tone === "primary"
         ? "var(--pin)"
         : tone === "paper"
-        ? "#FFF8E7"
+        ? "#FFFFFF"
         : "transparent";
-    const fg = tone === "primary" ? "#FFF8E7" : "var(--ink)";
+    const fg = tone === "primary" ? "var(--pin-foreground)" : "var(--ink)";
+    const border = tone === "ghost" ? "1.5px solid transparent" : undefined;
     return (
       <button
         ref={ref}
-        className={`rubber-button active:rubber-button-active disabled:opacity-40 disabled:pointer-events-none text-lg ${className}`}
-        style={{ backgroundColor: bg, color: fg, ...style }}
+        className={`rubber-button active:rubber-button-active disabled:opacity-40 disabled:pointer-events-none text-base ${className}`}
+        style={{ backgroundColor: bg, color: fg, border, ...style }}
         {...rest}
       />
     );

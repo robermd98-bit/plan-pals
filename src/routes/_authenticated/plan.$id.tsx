@@ -88,15 +88,15 @@ function PlanDetail() {
     setJoined(true);
   }
 
-  if (!plan) return <div className="p-5 text-amber-50">Cargando…</div>;
+  if (!plan) return <div className="p-5 text-[var(--ink)]">Cargando…</div>;
 
   return (
     <div className="flex flex-col h-screen pb-24">
       <header className="px-4 pt-5 pb-2 flex items-center gap-2">
-        <button onClick={() => navigate({ to: "/mis-planes" })} className="text-amber-50">
+        <button onClick={() => navigate({ to: "/mis-planes" })} className="text-[var(--ink)]">
           <ArrowLeft />
         </button>
-        <h1 className="text-2xl" style={{ color: "#FFF8E7" }}>{categoryEmoji(plan.category)} {categoryLabel(plan.category)}</h1>
+        <h1 className="text-2xl font-bold" style={{ color: "var(--ink)" }}>{categoryEmoji(plan.category)} {categoryLabel(plan.category)}</h1>
       </header>
 
       <div className="px-4">
@@ -115,18 +115,18 @@ function PlanDetail() {
       </div>
 
       <div className="px-4 mt-4">
-        <p className="text-amber-50/90 text-sm mb-2" style={{ fontFamily: "var(--font-hand)", fontSize: 18 }}>
+        <p className="text-[var(--ink)]/70 text-sm mb-2 font-semibold">
           La cuadrilla
         </p>
         <div className="flex gap-2 overflow-x-auto pb-2">
           {participants.map((p) => (
             <Link key={p.id} to="/u/$id" params={{ id: p.id }} className="shrink-0 flex flex-col items-center">
               {p.avatar_url ? (
-                <img src={p.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover border-2 border-amber-50" />
+                <img src={p.avatar_url} alt="" className="w-12 h-12 rounded-full object-cover border-2 border-[var(--border)]" />
               ) : (
-                <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center border-2 border-amber-50">👤</div>
+                <div className="w-12 h-12 rounded-full bg-white/70 flex items-center justify-center border-2 border-[var(--border)]">👤</div>
               )}
-              <span className="text-[11px] text-amber-50/90 mt-1 truncate max-w-[60px]">{p.name}</span>
+              <span className="text-[11px] text-[var(--ink)]/90 mt-1 truncate max-w-[60px]">{p.name}</span>
             </Link>
           ))}
         </div>
@@ -139,12 +139,10 @@ function PlanDetail() {
             return (
               <div key={m.id} className="flex justify-center my-1">
                 <span
-                  className="text-xs px-3 py-1 rounded-full text-center"
+                  className="text-xs px-3 py-1 rounded-full text-center font-medium"
                   style={{
-                    backgroundColor: "rgba(255,248,231,0.6)",
+                    backgroundColor: "var(--muted)",
                     color: "var(--ink)",
-                    fontFamily: "var(--font-hand)",
-                    fontSize: 15,
                   }}
                 >
                   👋 {author?.name ?? "Alguien"} se ha unido a la cuadrilla
@@ -157,15 +155,15 @@ function PlanDetail() {
           return (
             <div key={m.id} className={`flex ${own ? "justify-end" : "justify-start"}`}>
               <div className="max-w-[75%] rounded-2xl px-3 py-2 paper-shadow"
-                style={{ backgroundColor: own ? "var(--pin)" : "#FFF8E7", color: own ? "#FFF8E7" : "var(--ink)" }}>
-                {!own && <p className="text-[11px] opacity-70 mb-0.5" style={{ fontFamily: "var(--font-hand)", fontSize: 14 }}>{author?.name}</p>}
+                style={{ backgroundColor: own ? "var(--pin)" : "#FFFFFF", color: own ? "var(--pin-foreground)" : "var(--ink)", border: own ? "none" : "1px solid var(--border)" }}>
+                {!own && <p className="text-[11px] opacity-70 mb-0.5 font-semibold">{author?.name}</p>}
                 <p className="text-sm">{m.text}</p>
               </div>
             </div>
           );
         })}
         {messages.every((m) => m.text === JOIN_SYSTEM_MARK) && (
-          <p className="text-amber-50/70 text-center text-sm mt-6">{icebreaker}</p>
+          <p className="text-[var(--ink)]/70 text-center text-sm mt-6">{icebreaker}</p>
         )}
       </div>
 
@@ -176,7 +174,7 @@ function PlanDetail() {
             className="flex-1 bg-white/90 border-2 border-[var(--ink)]/20 rounded-full px-4 py-2"
           />
           <button type="submit" className="rounded-full w-11 h-11 flex items-center justify-center"
-            style={{ backgroundColor: "var(--pin)", color: "#FFF8E7" }}>
+            style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
             <Send size={18} />
           </button>
         </form>

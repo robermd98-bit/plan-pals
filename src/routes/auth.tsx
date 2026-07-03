@@ -56,10 +56,10 @@ function AuthPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-8">
       <div className="text-center">
-        <h1 style={{ fontFamily: "var(--font-hand)", fontSize: 64, color: "#FFF8E7", textShadow: "2px 2px 0 rgba(0,0,0,0.3)" }}>
+        <h1 style={{ fontSize: 56, fontWeight: 800, color: "var(--ink)", letterSpacing: "-0.02em" }}>
           Quedada
         </h1>
-        <p className="text-amber-50/90 -mt-2" style={{ fontFamily: "var(--font-hand)", fontSize: 22 }}>
+        <p className="text-[var(--ink)]/60 -mt-1" style={{ fontSize: 17 }}>
           el tablón de planes con desconocidos
         </p>
       </div>

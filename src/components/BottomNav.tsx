@@ -13,33 +13,30 @@ const items: Item[] = [
 export function BottomNav() {
   return (
     <nav
-      className="fixed bottom-0 inset-x-0 z-40 flex justify-around items-end px-2 pt-2 pb-3"
-      style={{
-        background:
-          "linear-gradient(180deg, transparent, rgba(50,30,15,0.55) 35%, rgba(50,30,15,0.85))",
-        backdropFilter: "blur(6px)",
-      }}
+      className="fixed bottom-0 inset-x-0 z-40 flex justify-around items-end px-2 pt-2 pb-3 bg-[var(--card)]"
+      style={{ borderTop: "1px solid var(--border)" }}
     >
       {items.map(({ to, label, icon: Icon, big, exact }) => (
         <Link
           key={to}
           to={to as never}
           activeOptions={exact ? { exact: true } : undefined}
-          className="flex flex-col items-center gap-0.5 text-[11px] text-amber-50/80 [&.active]:text-white"
+          className="flex flex-col items-center gap-0.5 text-[11px] text-[var(--ink)]/50 [&.active]:text-[var(--ink)]"
           activeProps={{ className: "active" }}
         >
           <span
-            className={`flex items-center justify-center rounded-full border-2 border-amber-50/80 ${
+            className={`flex items-center justify-center rounded-full ${
               big ? "w-12 h-12 -mt-5" : "w-9 h-9"
             }`}
             style={{
-              backgroundColor: big ? "var(--pin)" : "rgba(255,248,231,0.12)",
-              boxShadow: big ? "0 4px 10px rgba(0,0,0,0.4)" : undefined,
+              backgroundColor: big ? "var(--pin)" : "transparent",
+              color: big ? "var(--pin-foreground)" : "inherit",
+              boxShadow: big ? "0 4px 10px rgba(0,0,0,0.18)" : undefined,
             }}
           >
             <Icon size={big ? 24 : 18} />
           </span>
-          <span style={{ fontFamily: "var(--font-hand)", fontSize: 13 }}>
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600 }}>
             {label}
           </span>
         </Link>

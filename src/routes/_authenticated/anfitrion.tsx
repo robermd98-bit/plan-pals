@@ -84,7 +84,7 @@ function HostPage() {
     navigate({ to: "/plan/$id", params: { id: data.id } });
   }
 
-  if (isHost === null) return <div className="p-5 text-amber-50">Cargando…</div>;
+  if (isHost === null) return <div className="p-5 text-[var(--ink)]">Cargando…</div>;
 
   if (!isHost) {
     return (
@@ -105,7 +105,7 @@ function HostPage() {
 
   return (
     <div className="p-5 max-w-md mx-auto space-y-5">
-      <h1 className="text-4xl text-center" style={{ color: "#FFF8E7" }}>Panel anfitrión</h1>
+      <h1 className="text-4xl text-center" style={{ color: "var(--ink)" }}>Panel anfitrión</h1>
 
       <PaperNote category="aire_libre" rotation={-1}>
         <p className="text-sm uppercase tracking-wider opacity-70">Comisiones acumuladas</p>
@@ -127,7 +127,7 @@ function HostPage() {
       </PaperNote>
 
       <div>
-        <h2 className="text-2xl text-center" style={{ color: "#FFF8E7" }}>Catálogo de actividades</h2>
+        <h2 className="text-2xl text-center" style={{ color: "var(--ink)" }}>Catálogo de actividades</h2>
         <div className="grid gap-5 mt-3">
           {catalog.map((a, i) => (
             <PaperNote key={a.id} category={a.category} rotation={i % 2 === 0 ? -1 : 1}>

@@ -53,7 +53,7 @@ function CreatePlan() {
 
   return (
     <div className="p-5 max-w-md mx-auto">
-      <h1 className="text-4xl text-center" style={{ color: "#FFF8E7" }}>Cuelga un plan</h1>
+      <h1 className="text-4xl text-center font-extrabold" style={{ color: "var(--ink)" }}>Cuelga un plan</h1>
       <PaperNote category={category} rotation={-1} className="mt-4">
         <form onSubmit={submit} className="flex flex-col gap-3">
           <div>
@@ -63,8 +63,8 @@ function CreatePlan() {
                 <button type="button" key={c.id} onClick={() => setCategory(c.id)}
                   className="rubber-button text-sm"
                   style={{
-                    backgroundColor: category === c.id ? "var(--pin)" : "#FFF8E7",
-                    color: category === c.id ? "#FFF8E7" : "var(--ink)",
+                    backgroundColor: category === c.id ? "var(--pin)" : "#FFFFFF",
+                    color: category === c.id ? "var(--pin-foreground)" : "var(--ink)",
                   }}>
                   {c.emoji} {c.label}
                 </button>

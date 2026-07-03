@@ -101,7 +101,7 @@ function CompanyPage() {
     await loadAds();
   }
 
-  if (profile === null) return <div className="p-5 text-amber-50">Cargando…</div>;
+  if (profile === null) return <div className="p-5 text-[var(--ink)]">Cargando…</div>;
   if (!profile.is_company) {
     return (
       <div className="p-5 max-w-md mx-auto">
@@ -116,7 +116,7 @@ function CompanyPage() {
 
   return (
     <div className="p-5 max-w-md mx-auto space-y-4">
-      <h1 className="text-4xl text-center" style={{ color: "#FFF8E7" }}>{profile.company_name}</h1>
+      <h1 className="text-4xl text-center" style={{ color: "var(--ink)" }}>{profile.company_name}</h1>
 
       <div className="flex gap-2 justify-center">
         <RubberButton tone={tab === "directory" ? "primary" : "paper"} onClick={() => setTab("directory")}>Anfitriones</RubberButton>
@@ -125,7 +125,7 @@ function CompanyPage() {
 
       {tab === "directory" && (
         <div className="grid gap-4">
-          {hosts.length === 0 && <p className="text-amber-50/80 text-center">Todavía no hay anfitriones.</p>}
+          {hosts.length === 0 && <p className="text-[var(--ink)]/80 text-center">Todavía no hay anfitriones.</p>}
           {hosts.map((h, i) => (
             <PaperNote key={h.id} category="idiomas" rotation={i % 2 === 0 ? -1 : 1} onClick={() => openHostCard(h)}>
               <div className="flex items-center gap-3">
@@ -155,8 +155,8 @@ function CompanyPage() {
             <div className="mt-2"><RubberButton onClick={createAd}>Publicar anuncio</RubberButton></div>
           </PaperNote>
 
-          <h2 className="text-2xl text-center" style={{ color: "#FFF8E7" }}>Tus anuncios</h2>
-          {ads.length === 0 && <p className="text-amber-50/80 text-center text-sm">Aún no has publicado nada.</p>}
+          <h2 className="text-2xl text-center" style={{ color: "var(--ink)" }}>Tus anuncios</h2>
+          {ads.length === 0 && <p className="text-[var(--ink)]/80 text-center text-sm">Aún no has publicado nada.</p>}
           {ads.map((a, i) => (
             <PaperNote key={a.id} category="social" rotation={i % 2 === 0 ? 1 : -1}>
               <h3 className="text-2xl">{a.title}</h3>

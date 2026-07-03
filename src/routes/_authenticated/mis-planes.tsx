@@ -42,21 +42,21 @@ function MyPlans() {
 
   return (
     <div className="p-5">
-      <h1 className="text-4xl text-center" style={{ color: "#FFF8E7" }}>Mis planes</h1>
+      <h1 className="text-4xl text-center" style={{ color: "var(--ink)" }}>Mis planes</h1>
 
       <section className="mt-5">
-        <h2 className="text-2xl mb-2" style={{ color: "#FFF8E7" }}>Organizo</h2>
+        <h2 className="text-2xl mb-2" style={{ color: "var(--ink)" }}>Organizo</h2>
         {mine.length === 0 ? (
-          <p className="text-amber-50/80 text-sm">Aún no has colgado ningún plan.</p>
+          <p className="text-[var(--ink)]/80 text-sm">Aún no has colgado ningún plan.</p>
         ) : (
           <div className="grid gap-5">{mine.map((p, i) => <PlanRow key={p.id} plan={p} idx={i} />)}</div>
         )}
       </section>
 
       <section className="mt-8">
-        <h2 className="text-2xl mb-2" style={{ color: "#FFF8E7" }}>Voy</h2>
+        <h2 className="text-2xl mb-2" style={{ color: "var(--ink)" }}>Voy</h2>
         {joined.length === 0 ? (
-          <p className="text-amber-50/80 text-sm">Aún no te has apuntado a ningún plan.</p>
+          <p className="text-[var(--ink)]/80 text-sm">Aún no te has apuntado a ningún plan.</p>
         ) : (
           <div className="grid gap-5">{joined.map((p, i) => <PlanRow key={p.id} plan={p} idx={i} />)}</div>
         )}

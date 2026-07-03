@@ -4,7 +4,7 @@ import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-mo
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
-import { CATEGORIES, categoryLabel, paperColor, type Category } from "@/lib/categories";
+import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import { joinPlan } from "@/lib/joinPlan";
 import { Calendar, MapPin, Users, Heart, X } from "lucide-react";
 
@@ -143,8 +143,8 @@ function Discover() {
   return (
     <div className="px-4 pt-6">
       <header className="flex items-baseline justify-between mb-3">
-        <h1 className="text-4xl" style={{ color: "#FFF8E7" }}>El tablón</h1>
-        <span className="text-amber-50/80 text-sm" style={{ fontFamily: "var(--font-hand)", fontSize: 18 }}>
+        <h1 className="text-4xl font-extrabold" style={{ color: "var(--ink)" }}>El tablón</h1>
+        <span className="text-[var(--ink)]/50 text-sm">
           desliza para apuntarte
         </span>
       </header>
@@ -157,14 +157,8 @@ function Discover() {
       </div>
 
       <div className="relative h-[520px] mt-3">
-        {items && items.length > 0 && items[0].kind === "plan" && (
-          <div
-            className="absolute inset-x-8 top-10 h-[460px] rounded-full blur-3xl opacity-50 pointer-events-none"
-            style={{ backgroundColor: paperColor(items[0].category), zIndex: 0 }}
-          />
-        )}
         {items === null && (
-          <p className="text-center text-amber-50/80 mt-20">Cargando planes…</p>
+          <p className="text-center text-[var(--ink)]/60 mt-20">Cargando planes…</p>
         )}
         {items !== null && items.length === 0 && (
           <div className="flex flex-col items-center mt-10 gap-4">
@@ -208,13 +202,13 @@ function Discover() {
 
 function FilterChip({ active, onClick, label, emoji, tint }: { active: boolean; onClick: () => void; label: string; emoji: string; tint?: string }) {
   const activeBg = tint ?? "var(--pin)";
-  const activeFg = tint ? "var(--ink)" : "#FFF8E7";
+  const activeFg = tint ? "var(--ink)" : "var(--pin-foreground)";
   return (
     <button
       onClick={onClick}
       className="rubber-button shrink-0 text-sm"
       style={{
-        backgroundColor: active ? activeBg : "#FFF8E7",
+        backgroundColor: active ? activeBg : "#FFFFFF",
         color: active ? activeFg : "var(--ink)",
       }}
     >
@@ -280,7 +274,7 @@ function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { 
           {categoryLabel(plan.category)}
         </span>
         {plan.is_hosted && (
-          <span className="text-sm bg-[var(--ink)] text-amber-50 px-2 py-0.5 rounded-full">
+          <span className="text-sm bg-[var(--ink)] text-white px-2 py-0.5 rounded-full">
             🌟 Oficial
           </span>
         )}
@@ -303,7 +297,7 @@ function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { 
           <div className="w-8 h-8 rounded-full bg-white/60 flex items-center justify-center">👤</div>
         )}
         <span className="text-sm">
-          por <strong style={{ fontFamily: "var(--font-hand)", fontSize: 22 }}>{plan.creator?.name ?? "alguien"}</strong>
+          por <strong className="font-bold">{plan.creator?.name ?? "alguien"}</strong>
         </span>
       </div>
     </PaperNote>

@@ -1,6 +1,6 @@
 import { type ReactNode, type CSSProperties } from "react";
 import { motion } from "framer-motion";
-import { paperColor, washiColor, ringColor } from "@/lib/categories";
+import { paperColor, ringColor } from "@/lib/categories";
 
 export interface NoteAttendee {
   name: string;
@@ -9,8 +9,11 @@ export interface NoteAttendee {
 
 interface PaperNoteProps {
   category?: string;
+  /** @deprecated visual del corcho retirado; se ignora en el diseño plano */
   rotation?: number;
+  /** @deprecated visual del corcho retirado; se ignora en el diseño plano */
   pin?: boolean;
+  /** @deprecated visual del corcho retirado; se ignora en el diseño plano */
   tape?: boolean;
   className?: string;
   style?: CSSProperties;
@@ -35,7 +38,7 @@ function AttendeeStack({ attendees, total }: { attendees: NoteAttendee[]; total?
   if (!attendees.length) return null;
   const extra = (total ?? attendees.length) - attendees.length;
   return (
-    <div className="absolute -bottom-3 -right-2 flex items-center" style={{ transform: "rotate(4deg)" }}>
+    <div className="absolute -bottom-3 -right-2 flex items-center">
       {attendees.slice(0, 4).map((a, i) => (
         <div
           key={i}
@@ -69,7 +72,7 @@ function AttendeeStack({ attendees, total }: { attendees: NoteAttendee[]; total?
 export function PulseRings({
   color = "var(--pin)",
   count = 3,
-  rounded = "rounded-sm",
+  rounded = "rounded-2xl",
   expand = 1.06,
 }: {
   color?: string;
@@ -96,10 +99,10 @@ export function PulseRings({
 function ConfirmStamp({ label }: { label: string }) {
   return (
     <motion.div
-      className="absolute inset-0 z-30 flex items-center justify-center rounded-sm overflow-hidden"
+      className="absolute inset-0 z-30 flex items-center justify-center rounded-2xl overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ backgroundColor: "rgba(255,248,231,0.55)" }}
+      style={{ backgroundColor: "rgba(255,255,255,0.75)" }}
     >
       {[0, 0.15, 0.3].map((delay) => (
         <motion.span
@@ -112,11 +115,11 @@ function ConfirmStamp({ label }: { label: string }) {
         />
       ))}
       <motion.div
-        initial={{ scale: 2.4, opacity: 0, rotate: -8 }}
-        animate={{ scale: 1, opacity: 1, rotate: -8 }}
+        initial={{ scale: 2.4, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
         transition={{ type: "spring", stiffness: 360, damping: 16 }}
-        className="rubber-button text-2xl relative z-10"
-        style={{ backgroundColor: "var(--pin)", color: "#FFF8E7" }}
+        className="rubber-button text-2xl relative z-10 border-0"
+        style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}
       >
         {label}
       </motion.div>
@@ -126,9 +129,6 @@ function ConfirmStamp({ label }: { label: string }) {
 
 export function PaperNote({
   category = "social",
-  rotation = -2,
-  pin = true,
-  tape = true,
   className = "",
   style,
   children,
@@ -142,18 +142,16 @@ export function PaperNote({
   return (
     <div
       onClick={onClick}
-      className={`paper-shadow relative rounded-sm px-5 py-5 ${className}`}
+      className={`paper-shadow relative rounded-2xl px-5 py-5 bg-[var(--card)] border-l-4 ${className}`}
       style={{
-        backgroundColor: paperColor(category),
-        transform: `rotate(${rotation}deg)`,
-        backgroundImage:
-          "repeating-linear-gradient(0deg, rgba(0,0,0,0.015) 0 1px, transparent 1px 4px)",
+        borderLeftColor: paperColor(category),
+        borderTop: "1px solid var(--border)",
+        borderRight: "1px solid var(--border)",
+        borderBottom: "1px solid var(--border)",
         ...style,
       }}
     >
       {pulsing && <PulseRings color={ringColor(category)} />}
-      {pin && <span className="pin-dot" />}
-      {tape && <span className="tape-corner" style={{ background: washiColor(category) }} />}
       {children}
       {attendees && attendees.length > 0 && (
         <AttendeeStack attendees={attendees} total={attendeesTotal} />
