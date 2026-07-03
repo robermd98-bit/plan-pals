@@ -42,7 +42,11 @@ function PlanDetail() {
 
       const { data: parts } = await supabase.from("plan_participants").select("user_id").eq("plan_id", id);
       const userIds = Array.from(new Set([...(parts ?? []).map((x) => x.user_id), ...(p ? [p.creator_id] : [])]));
-      setJoined((parts ?? []).some((x) => x.user_id === userId) || p?.creator_id === userId);
+      const alreadyJoined = (parts ?? []).some((x) => x.user_id === userId) || p?.creator_id === userId;
+      setJoined(alreadyJoined);
+      if (!alreadyJoined && p) {
+        supabase.from("plan_views").insert({ user_id: userId, plan_id: id }).then(() => {});
+      }
       if (userIds.length) {
         const { data: profs } = await supabase.from("profiles").select("id, name, avatar_url").in("id", userIds);
         setParticipants(profs ?? []);
@@ -84,7 +88,7 @@ function PlanDetail() {
   }
 
   async function join() {
-    await joinPlan(id, userId);
+    await joinPlan(id, userId, plan?.is_hosted ?? false);
     setJoined(true);
   }
 

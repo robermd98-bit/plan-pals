@@ -1,9 +1,10 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { Camera } from "lucide-react";
+import { tierFor, nextTier } from "@/lib/tiers";
 
 type Profile = {
   id: string; name: string; age: number | null; city: string | null; bio: string | null;
@@ -20,6 +21,8 @@ function ProfilePage() {
   const [p, setP] = useState<Profile | null>(null);
   const [companyName, setCompanyName] = useState("");
   const [uploading, setUploading] = useState(false);
+  const [plansCount, setPlansCount] = useState(0);
+  const [points, setPoints] = useState(0);
 
   async function load() {
     const { data } = await supabase.from("profiles")
@@ -27,6 +30,13 @@ function ProfilePage() {
       .eq("id", userId).maybeSingle();
     setP(data);
     setCompanyName(data?.company_name ?? "");
+
+    const { count } = await supabase.from("plan_participants")
+      .select("*", { count: "exact", head: true }).eq("user_id", userId);
+    setPlansCount(count ?? 0);
+
+    const { data: ledger } = await supabase.from("points_ledger").select("amount").eq("user_id", userId);
+    setPoints((ledger ?? []).reduce((sum, r) => sum + r.amount, 0));
   }
   useEffect(() => { load(); }, [userId]);
 
@@ -118,6 +128,27 @@ function ProfilePage() {
             <p className="text-sm">📍 {p.city}</p>
           </div>
         </div>
+      </PaperNote>
+
+      <PaperNote category="cultura" rotation={0.5}>
+        <div className="flex items-center justify-between">
+          <div>
+            <p className="text-xs uppercase tracking-wider opacity-70">Tu nivel</p>
+            <h2 className="text-2xl">{tierFor(plansCount).emoji} {tierFor(plansCount).label}</h2>
+            {nextTier(plansCount) && (
+              <p className="text-xs mt-1 opacity-70">
+                {nextTier(plansCount)!.min - plansCount} planes más para llegar a {nextTier(plansCount)!.label}
+              </p>
+            )}
+          </div>
+          <div className="text-right">
+            <p className="text-xs uppercase tracking-wider opacity-70">Puntos</p>
+            <p className="text-2xl font-bold">{points}</p>
+          </div>
+        </div>
+        <Link to="/recompensas" className="rubber-button text-sm inline-block mt-3" style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
+          🎁 Ver recompensas
+        </Link>
       </PaperNote>
 
       <PaperNote category="deporte" rotation={1}>

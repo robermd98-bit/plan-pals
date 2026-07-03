@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedRecompensasRouteImport } from './routes/_authenticated/recompensas'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedMisPlanesRouteImport } from './routes/_authenticated/mis-planes'
@@ -35,6 +36,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedRecompensasRoute =
+  AuthenticatedRecompensasRouteImport.update({
+    id: '/recompensas',
+    path: '/recompensas',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -85,6 +92,7 @@ export interface FileRoutesByFullPath {
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/recompensas': typeof AuthenticatedRecompensasRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesByTo {
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/recompensas': typeof AuthenticatedRecompensasRoute
   '/': typeof AuthenticatedIndexRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
@@ -110,6 +119,7 @@ export interface FileRoutesById {
   '/_authenticated/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/recompensas': typeof AuthenticatedRecompensasRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/plan/$id': typeof AuthenticatedPlanIdRoute
   '/_authenticated/u/$id': typeof AuthenticatedUIdRoute
@@ -125,6 +135,7 @@ export interface FileRouteTypes {
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
+    | '/recompensas'
     | '/plan/$id'
     | '/u/$id'
   fileRoutesByTo: FileRoutesByTo
@@ -136,6 +147,7 @@ export interface FileRouteTypes {
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
+    | '/recompensas'
     | '/'
     | '/plan/$id'
     | '/u/$id'
@@ -149,6 +161,7 @@ export interface FileRouteTypes {
     | '/_authenticated/mis-planes'
     | '/_authenticated/onboarding'
     | '/_authenticated/perfil'
+    | '/_authenticated/recompensas'
     | '/_authenticated/'
     | '/_authenticated/plan/$id'
     | '/_authenticated/u/$id'
@@ -180,6 +193,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/recompensas': {
+      id: '/_authenticated/recompensas'
+      path: '/recompensas'
+      fullPath: '/recompensas'
+      preLoaderRoute: typeof AuthenticatedRecompensasRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/perfil': {
@@ -248,6 +268,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMisPlanesRoute: typeof AuthenticatedMisPlanesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedRecompensasRoute: typeof AuthenticatedRecompensasRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedPlanIdRoute: typeof AuthenticatedPlanIdRoute
   AuthenticatedUIdRoute: typeof AuthenticatedUIdRoute
@@ -260,6 +281,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMisPlanesRoute: AuthenticatedMisPlanesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedRecompensasRoute: AuthenticatedRecompensasRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedPlanIdRoute: AuthenticatedPlanIdRoute,
   AuthenticatedUIdRoute: AuthenticatedUIdRoute,

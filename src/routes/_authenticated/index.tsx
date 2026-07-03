@@ -132,7 +132,7 @@ function Discover() {
     }
     if (action === "join") {
       setConfirmingId(item.id);
-      const joinPromise = joinPlan(item.id, userId);
+      const joinPromise = joinPlan(item.id, userId, item.is_hosted);
       await Promise.all([joinPromise, new Promise((r) => setTimeout(r, 2000))]);
       navigate({ to: "/plan/$id", params: { id: item.id } });
       return;
