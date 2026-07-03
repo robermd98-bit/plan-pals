@@ -1,6 +1,6 @@
 import { type ReactNode, type CSSProperties } from "react";
 import { motion } from "framer-motion";
-import { paperColor, washiColor } from "@/lib/categories";
+import { paperColor, washiColor, ringColor } from "@/lib/categories";
 
 export interface NoteAttendee {
   name: string;
@@ -151,7 +151,7 @@ export function PaperNote({
         ...style,
       }}
     >
-      {pulsing && <PulseRings color={washiColor(category)} />}
+      {pulsing && <PulseRings color={ringColor(category)} />}
       {pin && <span className="pin-dot" />}
       {tape && <span className="tape-corner" style={{ background: washiColor(category) }} />}
       {children}
