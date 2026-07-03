@@ -65,19 +65,46 @@ function AttendeeStack({ attendees, total }: { attendees: NoteAttendee[]; total?
   );
 }
 
+export function PulseRings({ color = "var(--pin)", count = 3 }: { color?: string; count?: number }) {
+  return (
+    <>
+      {Array.from({ length: count }).map((_, i) => (
+        <motion.span
+          key={i}
+          className="absolute inset-0 rounded-xl pointer-events-none"
+          style={{ border: `2px solid ${color}` }}
+          initial={{ opacity: 0.5, scale: 1 }}
+          animate={{ opacity: 0, scale: 1.16 }}
+          transition={{ duration: 1.8, repeat: Infinity, delay: i * 0.55, ease: "easeOut" }}
+        />
+      ))}
+    </>
+  );
+}
+
 function ConfirmStamp({ label }: { label: string }) {
   return (
     <motion.div
-      className="absolute inset-0 z-30 flex items-center justify-center rounded-sm"
+      className="absolute inset-0 z-30 flex items-center justify-center rounded-sm overflow-hidden"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       style={{ backgroundColor: "rgba(255,248,231,0.55)" }}
     >
+      {[0, 0.15, 0.3].map((delay) => (
+        <motion.span
+          key={delay}
+          className="absolute rounded-full pointer-events-none"
+          style={{ border: "3px solid var(--pin)", width: 40, height: 40, top: "50%", left: "50%" }}
+          initial={{ opacity: 0.8, scale: 0.3, x: "-50%", y: "-50%" }}
+          animate={{ opacity: 0, scale: 7, x: "-50%", y: "-50%" }}
+          transition={{ duration: 0.9, delay, ease: "easeOut" }}
+        />
+      ))}
       <motion.div
         initial={{ scale: 2.4, opacity: 0, rotate: -8 }}
         animate={{ scale: 1, opacity: 1, rotate: -8 }}
         transition={{ type: "spring", stiffness: 360, damping: 16 }}
-        className="rubber-button text-2xl"
+        className="rubber-button text-2xl relative z-10"
         style={{ backgroundColor: "var(--pin)", color: "#FFF8E7" }}
       >
         {label}

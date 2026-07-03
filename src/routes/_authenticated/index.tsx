@@ -2,9 +2,9 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { PaperNote } from "@/components/PaperNote";
+import { PaperNote, PulseRings } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
-import { CATEGORIES, categoryLabel, paperColor, type Category } from "@/lib/categories";
+import { CATEGORIES, categoryLabel, paperColor, washiColor, type Category } from "@/lib/categories";
 import { joinPlan } from "@/lib/joinPlan";
 import { Calendar, MapPin, Users, Heart, X } from "lucide-react";
 
@@ -258,12 +258,12 @@ function SwipeCard({
         else if (info.offset.x < -120) onSwipe("skip");
       }}
     >
-      {item.kind === "ad" ? <AdCard ad={item} /> : <PlanCard plan={item} confirming={confirming} />}
+      {item.kind === "ad" ? <AdCard ad={item} /> : <PlanCard plan={item} confirming={confirming} isTop={isTop} />}
     </motion.div>
   );
 }
 
-function PlanCard({ plan, confirming = false }: { plan: Plan & { kind: "plan" }; confirming?: boolean }) {
+function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { kind: "plan" }; confirming?: boolean; isTop?: boolean }) {
   return (
     <PaperNote
       category={plan.category}
@@ -284,7 +284,10 @@ function PlanCard({ plan, confirming = false }: { plan: Plan & { kind: "plan" };
           </span>
         )}
       </div>
-      <h2 className="text-[2.75rem] leading-[1.05]">{plan.title}</h2>
+      <h2 className="relative text-[2.75rem] leading-[1.05] inline-block">
+        {isTop && !confirming && <PulseRings color={washiColor(plan.category)} />}
+        <span className="relative">{plan.title}</span>
+      </h2>
       <p className="mt-3 text-base flex-1 overflow-hidden">{plan.description}</p>
 
       <div className="mt-3 space-y-1.5 text-sm">
