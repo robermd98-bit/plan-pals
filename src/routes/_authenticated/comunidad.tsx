@@ -14,6 +14,15 @@ function Comunidad() {
         Habla con gente por tema, sin necesidad de estar apuntado a ningún plan
       </p>
       <div className="grid gap-3">
+        <Link to="/comunidad/$category" params={{ category: "general" }}>
+          <div className="rounded-2xl px-4 py-3 flex items-center gap-3" style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
+            <span className="text-3xl">💬</span>
+            <div>
+              <h2 className="text-xl font-semibold">General</h2>
+              <p className="text-xs opacity-80">Para hablar de lo que sea, con todo el mundo</p>
+            </div>
+          </div>
+        </Link>
         {CATEGORIES.map((c) => (
           <Link key={c.id} to="/comunidad/$category" params={{ category: c.id }}>
             <PaperNote category={c.id} rotation={0}>

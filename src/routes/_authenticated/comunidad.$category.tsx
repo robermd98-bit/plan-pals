@@ -79,7 +79,7 @@ function CommunityRoom() {
           <ArrowLeft />
         </button>
         <h1 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
-          {categoryEmoji(category)} Sala de {categoryLabel(category)}
+          {category === "general" ? "💬 Chat general" : `${categoryEmoji(category)} Sala de ${categoryLabel(category)}`}
         </h1>
       </header>
 

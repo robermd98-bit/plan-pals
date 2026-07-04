@@ -33,6 +33,57 @@ export const Route = createFileRoute("/_authenticated/")({
   component: Discover,
 });
 
+function GeneralChatPreview() {
+  const navigate = useNavigate();
+  const [latest, setLatest] = useState<{ text: string; name: string } | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from("community_messages")
+        .select("sender_id, text")
+        .eq("category", "general")
+        .order("created_at", { ascending: false })
+        .limit(1);
+      const row = data?.[0];
+      if (row) {
+        const { data: prof } = await supabase.from("profiles").select("name").eq("id", row.sender_id).maybeSingle();
+        setLatest({ text: row.text, name: prof?.name ?? "Alguien" });
+      }
+    })();
+
+    const ch = supabase
+      .channel("community-general-preview")
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "community_messages", filter: "category=eq.general" },
+        async (payload) => {
+          const m = payload.new as { sender_id: string; text: string };
+          const { data: prof } = await supabase.from("profiles").select("name").eq("id", m.sender_id).maybeSingle();
+          setLatest({ text: m.text, name: prof?.name ?? "Alguien" });
+        },
+      )
+      .subscribe();
+    return () => { supabase.removeChannel(ch); };
+  }, []);
+
+  return (
+    <button
+      onClick={() => navigate({ to: "/comunidad/$category", params: { category: "general" } })}
+      className="flex items-center gap-2 rounded-full pl-2 pr-3 py-1.5 max-w-[190px]"
+      style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}
+    >
+      <span className="w-2 h-2 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: "var(--pin)" }} />
+      <div className="text-left min-w-0">
+        <p className="text-[9px] font-bold uppercase tracking-wide opacity-50 leading-none">💬 Chat general</p>
+        <p className="text-xs truncate leading-tight mt-0.5">
+          {latest ? <><strong>{latest.name}:</strong> {latest.text}</> : "Sé el primero en escribir"}
+        </p>
+      </div>
+    </button>
+  );
+}
+
 function Discover() {
   const { userId } = Route.useRouteContext();
   const navigate = useNavigate();
@@ -162,15 +213,18 @@ function Discover() {
 
   return (
     <div className="px-4 pt-6">
-      <header className="flex items-center justify-between mb-3">
+      <header className="flex items-start justify-between mb-3 gap-2">
         <div>
           <h1 className="text-4xl font-extrabold" style={{ color: "var(--ink)" }}>El tablón</h1>
           <span className="text-[var(--ink)]/50 text-sm">desliza para apuntarte</span>
         </div>
-        <Link to="/comunidad" className="flex flex-col items-center gap-0.5" style={{ color: "var(--ink)" }}>
-          <MessageCircle size={26} />
-          <span className="text-[10px] font-semibold">Salas</span>
-        </Link>
+        <div className="flex flex-col items-end gap-1.5 shrink-0">
+          <GeneralChatPreview />
+          <Link to="/comunidad" className="flex items-center gap-1" style={{ color: "var(--ink)" }}>
+            <MessageCircle size={20} />
+            <span className="text-xs font-semibold">Salas</span>
+          </Link>
+        </div>
       </header>
 
       <div className="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4">
