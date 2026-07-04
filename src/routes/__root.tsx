@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Quedada v1" },
+      { name: "description", content: "Plan Pals connects you with people for shared activities, not dating." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Quedada v1" },
+      { property: "og:description", content: "Plan Pals connects you with people for shared activities, not dating." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Quedada v1" },
+      { name: "twitter:description", content: "Plan Pals connects you with people for shared activities, not dating." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dd694077-0da8-4380-8a6a-69be83cd800f/id-preview-2438f548--6d169011-946c-43a0-ac33-3090ac36b634.lovable.app-1783103382210.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/dd694077-0da8-4380-8a6a-69be83cd800f/id-preview-2438f548--6d169011-946c-43a0-ac33-3090ac36b634.lovable.app-1783103382210.png" },
     ],
     links: [
       {
