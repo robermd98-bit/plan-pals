@@ -77,6 +77,30 @@ export type Database = {
         }
         Relationships: []
       }
+      community_messages: {
+        Row: {
+          category: string
+          created_at: string
+          id: string
+          sender_id: string
+          text: string
+        }
+        Insert: {
+          category: string
+          created_at?: string
+          id?: string
+          sender_id: string
+          text: string
+        }
+        Update: {
+          category?: string
+          created_at?: string
+          id?: string
+          sender_id?: string
+          text?: string
+        }
+        Relationships: []
+      }
       host_reviews: {
         Row: {
           comment: string | null
@@ -136,6 +160,39 @@ export type Database = {
           },
         ]
       }
+      partner_rewards: {
+        Row: {
+          active: boolean
+          category: string
+          company_name: string
+          created_at: string
+          description: string | null
+          id: string
+          points_cost: number
+          title: string
+        }
+        Insert: {
+          active?: boolean
+          category: string
+          company_name: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          points_cost: number
+          title: string
+        }
+        Update: {
+          active?: boolean
+          category?: string
+          company_name?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          points_cost?: number
+          title?: string
+        }
+        Relationships: []
+      }
       plan_participants: {
         Row: {
           joined_at: string
@@ -155,6 +212,35 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "plan_participants_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      plan_views: {
+        Row: {
+          id: string
+          plan_id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          plan_id: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          plan_id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_views_plan_id_fkey"
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
@@ -224,6 +310,41 @@ export type Database = {
           },
         ]
       }
+      points_ledger: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          plan_id: string | null
+          reason: string
+          user_id: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          plan_id?: string | null
+          reason: string
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          plan_id?: string | null
+          reason?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "points_ledger_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           age: number | null
@@ -268,6 +389,35 @@ export type Database = {
           onboarded?: boolean
         }
         Relationships: []
+      }
+      reward_redemptions: {
+        Row: {
+          created_at: string
+          id: string
+          reward_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          reward_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          reward_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "reward_redemptions_reward_id_fkey"
+            columns: ["reward_id"]
+            isOneToOne: false
+            referencedRelation: "partner_rewards"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
