@@ -23,6 +23,7 @@ import { Route as AuthenticatedAnfitrionRouteImport } from './routes/_authentica
 import { Route as AuthenticatedUIdRouteImport } from './routes/_authenticated/u.$id'
 import { Route as AuthenticatedPlanIdRouteImport } from './routes/_authenticated/plan.$id'
 import { Route as AuthenticatedComunidadCategoryRouteImport } from './routes/_authenticated/comunidad.$category'
+import { Route as AuthenticatedClubesCompanyRouteImport } from './routes/_authenticated/clubes.$company'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -95,6 +96,12 @@ const AuthenticatedComunidadCategoryRoute =
     path: '/$category',
     getParentRoute: () => AuthenticatedComunidadRoute,
   } as any)
+const AuthenticatedClubesCompanyRoute =
+  AuthenticatedClubesCompanyRouteImport.update({
+    id: '/clubes/$company',
+    path: '/clubes/$company',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
@@ -107,6 +114,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/recompensas': typeof AuthenticatedRecompensasRoute
+  '/clubes/$company': typeof AuthenticatedClubesCompanyRoute
   '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
@@ -122,6 +130,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/recompensas': typeof AuthenticatedRecompensasRoute
   '/': typeof AuthenticatedIndexRoute
+  '/clubes/$company': typeof AuthenticatedClubesCompanyRoute
   '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
@@ -139,6 +148,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/recompensas': typeof AuthenticatedRecompensasRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/clubes/$company': typeof AuthenticatedClubesCompanyRoute
   '/_authenticated/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/_authenticated/plan/$id': typeof AuthenticatedPlanIdRoute
   '/_authenticated/u/$id': typeof AuthenticatedUIdRoute
@@ -156,6 +166,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/perfil'
     | '/recompensas'
+    | '/clubes/$company'
     | '/comunidad/$category'
     | '/plan/$id'
     | '/u/$id'
@@ -171,6 +182,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/recompensas'
     | '/'
+    | '/clubes/$company'
     | '/comunidad/$category'
     | '/plan/$id'
     | '/u/$id'
@@ -187,6 +199,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/recompensas'
     | '/_authenticated/'
+    | '/_authenticated/clubes/$company'
     | '/_authenticated/comunidad/$category'
     | '/_authenticated/plan/$id'
     | '/_authenticated/u/$id'
@@ -297,6 +310,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedComunidadCategoryRouteImport
       parentRoute: typeof AuthenticatedComunidadRoute
     }
+    '/_authenticated/clubes/$company': {
+      id: '/_authenticated/clubes/$company'
+      path: '/clubes/$company'
+      fullPath: '/clubes/$company'
+      preLoaderRoute: typeof AuthenticatedClubesCompanyRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
   }
 }
 
@@ -324,6 +344,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
   AuthenticatedRecompensasRoute: typeof AuthenticatedRecompensasRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
+  AuthenticatedClubesCompanyRoute: typeof AuthenticatedClubesCompanyRoute
   AuthenticatedPlanIdRoute: typeof AuthenticatedPlanIdRoute
   AuthenticatedUIdRoute: typeof AuthenticatedUIdRoute
 }
@@ -338,6 +359,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
   AuthenticatedRecompensasRoute: AuthenticatedRecompensasRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
+  AuthenticatedClubesCompanyRoute: AuthenticatedClubesCompanyRoute,
   AuthenticatedPlanIdRoute: AuthenticatedPlanIdRoute,
   AuthenticatedUIdRoute: AuthenticatedUIdRoute,
 }
