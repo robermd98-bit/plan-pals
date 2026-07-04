@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,7 +6,7 @@ import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import { joinPlan } from "@/lib/joinPlan";
-import { Calendar, MapPin, Users, Heart, X } from "lucide-react";
+import { Calendar, MapPin, Users, Heart, X, MessageCircle } from "lucide-react";
 
 type Plan = {
   id: string;
@@ -162,11 +162,15 @@ function Discover() {
 
   return (
     <div className="px-4 pt-6">
-      <header className="flex items-baseline justify-between mb-3">
-        <h1 className="text-4xl font-extrabold" style={{ color: "var(--ink)" }}>El tablón</h1>
-        <span className="text-[var(--ink)]/50 text-sm">
-          desliza para apuntarte
-        </span>
+      <header className="flex items-center justify-between mb-3">
+        <div>
+          <h1 className="text-4xl font-extrabold" style={{ color: "var(--ink)" }}>El tablón</h1>
+          <span className="text-[var(--ink)]/50 text-sm">desliza para apuntarte</span>
+        </div>
+        <Link to="/comunidad" className="flex flex-col items-center gap-0.5" style={{ color: "var(--ink)" }}>
+          <MessageCircle size={26} />
+          <span className="text-[10px] font-semibold">Salas</span>
+        </Link>
       </header>
 
       <div className="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4">

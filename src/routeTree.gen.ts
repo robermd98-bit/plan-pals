@@ -18,9 +18,11 @@ import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authentic
 import { Route as AuthenticatedMisPlanesRouteImport } from './routes/_authenticated/mis-planes'
 import { Route as AuthenticatedEmpresaRouteImport } from './routes/_authenticated/empresa'
 import { Route as AuthenticatedCrearRouteImport } from './routes/_authenticated/crear'
+import { Route as AuthenticatedComunidadRouteImport } from './routes/_authenticated/comunidad'
 import { Route as AuthenticatedAnfitrionRouteImport } from './routes/_authenticated/anfitrion'
 import { Route as AuthenticatedUIdRouteImport } from './routes/_authenticated/u.$id'
 import { Route as AuthenticatedPlanIdRouteImport } from './routes/_authenticated/plan.$id'
+import { Route as AuthenticatedComunidadCategoryRouteImport } from './routes/_authenticated/comunidad.$category'
 
 const AuthRoute = AuthRouteImport.update({
   id: '/auth',
@@ -67,6 +69,11 @@ const AuthenticatedCrearRoute = AuthenticatedCrearRouteImport.update({
   path: '/crear',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedComunidadRoute = AuthenticatedComunidadRouteImport.update({
+  id: '/comunidad',
+  path: '/comunidad',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedAnfitrionRoute = AuthenticatedAnfitrionRouteImport.update({
   id: '/anfitrion',
   path: '/anfitrion',
@@ -82,23 +89,32 @@ const AuthenticatedPlanIdRoute = AuthenticatedPlanIdRouteImport.update({
   path: '/plan/$id',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedComunidadCategoryRoute =
+  AuthenticatedComunidadCategoryRouteImport.update({
+    id: '/$category',
+    path: '/$category',
+    getParentRoute: () => AuthenticatedComunidadRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof AuthenticatedIndexRoute
   '/auth': typeof AuthRoute
   '/anfitrion': typeof AuthenticatedAnfitrionRoute
+  '/comunidad': typeof AuthenticatedComunidadRouteWithChildren
   '/crear': typeof AuthenticatedCrearRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
   '/recompensas': typeof AuthenticatedRecompensasRoute
+  '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/anfitrion': typeof AuthenticatedAnfitrionRoute
+  '/comunidad': typeof AuthenticatedComunidadRouteWithChildren
   '/crear': typeof AuthenticatedCrearRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
@@ -106,6 +122,7 @@ export interface FileRoutesByTo {
   '/perfil': typeof AuthenticatedPerfilRoute
   '/recompensas': typeof AuthenticatedRecompensasRoute
   '/': typeof AuthenticatedIndexRoute
+  '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
 }
@@ -114,6 +131,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/auth': typeof AuthRoute
   '/_authenticated/anfitrion': typeof AuthenticatedAnfitrionRoute
+  '/_authenticated/comunidad': typeof AuthenticatedComunidadRouteWithChildren
   '/_authenticated/crear': typeof AuthenticatedCrearRoute
   '/_authenticated/empresa': typeof AuthenticatedEmpresaRoute
   '/_authenticated/mis-planes': typeof AuthenticatedMisPlanesRoute
@@ -121,6 +139,7 @@ export interface FileRoutesById {
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
   '/_authenticated/recompensas': typeof AuthenticatedRecompensasRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/_authenticated/plan/$id': typeof AuthenticatedPlanIdRoute
   '/_authenticated/u/$id': typeof AuthenticatedUIdRoute
 }
@@ -130,18 +149,21 @@ export interface FileRouteTypes {
     | '/'
     | '/auth'
     | '/anfitrion'
+    | '/comunidad'
     | '/crear'
     | '/empresa'
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
     | '/recompensas'
+    | '/comunidad/$category'
     | '/plan/$id'
     | '/u/$id'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
     | '/anfitrion'
+    | '/comunidad'
     | '/crear'
     | '/empresa'
     | '/mis-planes'
@@ -149,6 +171,7 @@ export interface FileRouteTypes {
     | '/perfil'
     | '/recompensas'
     | '/'
+    | '/comunidad/$category'
     | '/plan/$id'
     | '/u/$id'
   id:
@@ -156,6 +179,7 @@ export interface FileRouteTypes {
     | '/_authenticated'
     | '/auth'
     | '/_authenticated/anfitrion'
+    | '/_authenticated/comunidad'
     | '/_authenticated/crear'
     | '/_authenticated/empresa'
     | '/_authenticated/mis-planes'
@@ -163,6 +187,7 @@ export interface FileRouteTypes {
     | '/_authenticated/perfil'
     | '/_authenticated/recompensas'
     | '/_authenticated/'
+    | '/_authenticated/comunidad/$category'
     | '/_authenticated/plan/$id'
     | '/_authenticated/u/$id'
   fileRoutesById: FileRoutesById
@@ -237,6 +262,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedCrearRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comunidad': {
+      id: '/_authenticated/comunidad'
+      path: '/comunidad'
+      fullPath: '/comunidad'
+      preLoaderRoute: typeof AuthenticatedComunidadRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
     '/_authenticated/anfitrion': {
       id: '/_authenticated/anfitrion'
       path: '/anfitrion'
@@ -258,11 +290,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedPlanIdRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comunidad/$category': {
+      id: '/_authenticated/comunidad/$category'
+      path: '/$category'
+      fullPath: '/comunidad/$category'
+      preLoaderRoute: typeof AuthenticatedComunidadCategoryRouteImport
+      parentRoute: typeof AuthenticatedComunidadRoute
+    }
   }
 }
 
+interface AuthenticatedComunidadRouteChildren {
+  AuthenticatedComunidadCategoryRoute: typeof AuthenticatedComunidadCategoryRoute
+}
+
+const AuthenticatedComunidadRouteChildren: AuthenticatedComunidadRouteChildren =
+  {
+    AuthenticatedComunidadCategoryRoute: AuthenticatedComunidadCategoryRoute,
+  }
+
+const AuthenticatedComunidadRouteWithChildren =
+  AuthenticatedComunidadRoute._addFileChildren(
+    AuthenticatedComunidadRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
   AuthenticatedAnfitrionRoute: typeof AuthenticatedAnfitrionRoute
+  AuthenticatedComunidadRoute: typeof AuthenticatedComunidadRouteWithChildren
   AuthenticatedCrearRoute: typeof AuthenticatedCrearRoute
   AuthenticatedEmpresaRoute: typeof AuthenticatedEmpresaRoute
   AuthenticatedMisPlanesRoute: typeof AuthenticatedMisPlanesRoute
@@ -276,6 +330,7 @@ interface AuthenticatedRouteRouteChildren {
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedAnfitrionRoute: AuthenticatedAnfitrionRoute,
+  AuthenticatedComunidadRoute: AuthenticatedComunidadRouteWithChildren,
   AuthenticatedCrearRoute: AuthenticatedCrearRoute,
   AuthenticatedEmpresaRoute: AuthenticatedEmpresaRoute,
   AuthenticatedMisPlanesRoute: AuthenticatedMisPlanesRoute,
