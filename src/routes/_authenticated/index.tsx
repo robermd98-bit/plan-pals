@@ -1,5 +1,5 @@
 import { createFileRoute, useNavigate, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence, useMotionValue, useTransform } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
@@ -35,21 +35,28 @@ export const Route = createFileRoute("/_authenticated/")({
 
 function GeneralChatPreview() {
   const navigate = useNavigate();
-  const [latest, setLatest] = useState<{ text: string; name: string } | null>(null);
+  const [msgs, setMsgs] = useState<{ id: string; text: string; name: string }[]>([]);
+  const namesRef = useRef<Record<string, string>>({});
+
+  async function nameFor(userId: string) {
+    if (namesRef.current[userId]) return namesRef.current[userId];
+    const { data } = await supabase.from("profiles").select("name").eq("id", userId).maybeSingle();
+    const name = data?.name ?? "Alguien";
+    namesRef.current[userId] = name;
+    return name;
+  }
 
   useEffect(() => {
     (async () => {
       const { data } = await supabase
         .from("community_messages")
-        .select("sender_id, text")
+        .select("id, sender_id, text")
         .eq("category", "general")
         .order("created_at", { ascending: false })
-        .limit(1);
-      const row = data?.[0];
-      if (row) {
-        const { data: prof } = await supabase.from("profiles").select("name").eq("id", row.sender_id).maybeSingle();
-        setLatest({ text: row.text, name: prof?.name ?? "Alguien" });
-      }
+        .limit(5);
+      const rows = (data ?? []).slice().reverse();
+      const withNames = await Promise.all(rows.map(async (r) => ({ id: r.id, text: r.text, name: await nameFor(r.sender_id) })));
+      setMsgs(withNames);
     })();
 
     const ch = supabase
@@ -58,9 +65,9 @@ function GeneralChatPreview() {
         "postgres_changes",
         { event: "INSERT", schema: "public", table: "community_messages", filter: "category=eq.general" },
         async (payload) => {
-          const m = payload.new as { sender_id: string; text: string };
-          const { data: prof } = await supabase.from("profiles").select("name").eq("id", m.sender_id).maybeSingle();
-          setLatest({ text: m.text, name: prof?.name ?? "Alguien" });
+          const m = payload.new as { id: string; sender_id: string; text: string };
+          const name = await nameFor(m.sender_id);
+          setMsgs((prev) => [...prev, { id: m.id, text: m.text, name }].slice(-5));
         },
       )
       .subscribe();
@@ -70,15 +77,23 @@ function GeneralChatPreview() {
   return (
     <button
       onClick={() => navigate({ to: "/comunidad/$category", params: { category: "general" } })}
-      className="flex items-center gap-2 rounded-full pl-2 pr-3 py-1.5 max-w-[190px]"
-      style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}
+      className="text-left rounded-xl overflow-hidden"
+      style={{ width: 172, backgroundColor: "rgba(255,255,255,0.9)", border: "1px solid var(--border)" }}
     >
-      <span className="w-2 h-2 rounded-full shrink-0 animate-pulse" style={{ backgroundColor: "var(--pin)" }} />
-      <div className="text-left min-w-0">
-        <p className="text-[9px] font-bold uppercase tracking-wide opacity-50 leading-none">💬 Chat general</p>
-        <p className="text-xs truncate leading-tight mt-0.5">
-          {latest ? <><strong>{latest.name}:</strong> {latest.text}</> : "Sé el primero en escribir"}
-        </p>
+      <div className="flex items-center gap-1.5 px-2 pt-1.5">
+        <span className="w-1.5 h-1.5 rounded-full animate-pulse shrink-0" style={{ backgroundColor: "var(--pin)" }} />
+        <span className="text-[9px] font-bold uppercase tracking-wide opacity-50">Chat general · en vivo</span>
+      </div>
+      <div className="px-2 py-1.5 space-y-0.5 min-h-[70px]">
+        {msgs.length === 0 ? (
+          <p className="text-[10px] opacity-50">Sin mensajes todavía</p>
+        ) : (
+          msgs.map((m) => (
+            <p key={m.id} className="text-[10px] leading-snug truncate" style={{ color: "var(--ink)" }}>
+              <strong>{m.name}:</strong> {m.text}
+            </p>
+          ))
+        )}
       </div>
     </button>
   );
