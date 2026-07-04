@@ -101,27 +101,6 @@ export type Database = {
         }
         Relationships: []
       }
-      club_members: {
-        Row: {
-          id: string
-          company_name: string
-          user_id: string
-          joined_at: string
-        }
-        Insert: {
-          id?: string
-          company_name: string
-          user_id: string
-          joined_at?: string
-        }
-        Update: {
-          id?: string
-          company_name?: string
-          user_id?: string
-          joined_at?: string
-        }
-        Relationships: []
-      }
       host_reviews: {
         Row: {
           comment: string | null
