@@ -6,6 +6,7 @@ import { RubberButton } from "@/components/RubberButton";
 import { categoryEmoji, categoryLabel } from "@/lib/categories";
 import { randomIcebreaker } from "@/lib/icebreakers";
 import { joinPlan, JOIN_SYSTEM_MARK } from "@/lib/joinPlan";
+import { tierFor } from "@/lib/tiers";
 import { ArrowLeft, Send } from "lucide-react";
 
 type Plan = {
@@ -29,6 +30,7 @@ function PlanDetail() {
   const [text, setText] = useState("");
   const [joined, setJoined] = useState(false);
   const [icebreaker, setIcebreaker] = useState(randomIcebreaker);
+  const [plansCount, setPlansCount] = useState(0);
 
   useEffect(() => {
     setIcebreaker(randomIcebreaker());
@@ -53,6 +55,10 @@ function PlanDetail() {
       }
       const { data: msgs } = await supabase.from("messages").select("*").eq("plan_id", id).order("created_at");
       setMessages(msgs ?? []);
+
+      const { count } = await supabase.from("plan_participants")
+        .select("*", { count: "exact", head: true }).eq("user_id", userId);
+      setPlansCount(count ?? 0);
     })();
   }, [id, userId]);
 
@@ -110,6 +116,13 @@ function PlanDetail() {
           <p className="text-sm mt-2">📍 {plan.location}</p>
           <p className="text-sm">📅 {formatDate(plan.date)} · {plan.time.slice(0,5)}</p>
           {plan.is_hosted && <p className="text-sm mt-2">🌟 Plan oficial con {plan.company_name}</p>}
+          {plan.is_hosted && !joined && (
+            <div className="mt-2 rounded-lg px-3 py-2 text-sm font-semibold" style={{ backgroundColor: "var(--muted)", color: "var(--pin)" }}>
+              {tierFor(plansCount).discount > 0
+                ? `🎁 Tu nivel (${tierFor(plansCount).label}) te da ${tierFor(plansCount).discount}% de descuento aquí`
+                : `Sube de nivel apuntándote a más planes y consigue descuento en planes como este`}
+            </div>
+          )}
           {!joined && (
             <div className="mt-3 flex justify-center">
               <RubberButton onClick={join}>Me apunto</RubberButton>

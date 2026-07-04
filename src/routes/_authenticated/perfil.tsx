@@ -135,9 +135,12 @@ function ProfilePage() {
           <div>
             <p className="text-xs uppercase tracking-wider opacity-70">Tu nivel</p>
             <h2 className="text-2xl">{tierFor(plansCount).emoji} {tierFor(plansCount).label}</h2>
+            <p className="text-sm mt-1 font-semibold" style={{ color: "var(--pin)" }}>
+              {tierFor(plansCount).discount}% de descuento en planes oficiales
+            </p>
             {nextTier(plansCount) && (
               <p className="text-xs mt-1 opacity-70">
-                {nextTier(plansCount)!.min - plansCount} planes más para llegar a {nextTier(plansCount)!.label}
+                {nextTier(plansCount)!.min - plansCount} planes más para llegar a {nextTier(plansCount)!.label} ({nextTier(plansCount)!.discount}% dto)
               </p>
             )}
           </div>

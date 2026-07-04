@@ -23,6 +23,7 @@ type Plan = {
   creator?: { name: string; avatar_url: string | null } | null;
   going?: number;
   attendees?: { name: string; avatar_url: string | null }[];
+  knownAttendeeName?: string;
 };
 
 type Ad = { id: string; company_name: string; title: string; message: string; kind: "ad" };
@@ -46,6 +47,17 @@ function Discover() {
       .select("plan_id")
       .eq("user_id", userId);
     const joinedIds = new Set((joined ?? []).map((j) => j.plan_id));
+
+    // personas con las que ya coincidiste en algun plan anterior (fomo social)
+    let knownIds = new Set<string>();
+    if (joinedIds.size) {
+      const { data: co } = await supabase
+        .from("plan_participants")
+        .select("plan_id, user_id")
+        .in("plan_id", Array.from(joinedIds))
+        .neq("user_id", userId);
+      knownIds = new Set((co ?? []).map((r) => r.user_id));
+    }
 
     let q = supabase
       .from("plans")
@@ -75,7 +87,7 @@ function Discover() {
       (pp ?? []).forEach((r) => {
         counts.set(r.plan_id, (counts.get(r.plan_id) ?? 0) + 1);
         const arr = attendeeIdsByPlan.get(r.plan_id) ?? [];
-        if (arr.length < 4) arr.push(r.user_id);
+        arr.push(r.user_id);
         attendeeIdsByPlan.set(r.plan_id, arr);
       });
     }
@@ -85,16 +97,24 @@ function Discover() {
       : { data: [] as { id: string; name: string; avatar_url: string | null }[] };
     const attendeeMap = new Map((attendeeProfs ?? []).map((p) => [p.id, p]));
 
-    const planItems: FeedItem[] = filtered.map((p) => ({
-      ...p,
-      kind: "plan" as const,
-      creator: pmap.get(p.creator_id) ?? null,
-      going: counts.get(p.id) ?? 0,
-      attendees: (attendeeIdsByPlan.get(p.id) ?? [])
-        .map((uid) => attendeeMap.get(uid))
-        .filter((p): p is { id: string; name: string; avatar_url: string | null } => !!p)
-        .map((p) => ({ name: p.name, avatar_url: p.avatar_url })),
-    }));
+    const planItems: FeedItem[] = filtered.map((p) => {
+      const allIds = attendeeIdsByPlan.get(p.id) ?? [];
+      const sortedIds = [...allIds].sort((a, b) => Number(knownIds.has(b)) - Number(knownIds.has(a)));
+      const knownId = sortedIds.find((uid) => knownIds.has(uid));
+      const knownProfile = knownId ? attendeeMap.get(knownId) : undefined;
+      return {
+        ...p,
+        kind: "plan" as const,
+        creator: pmap.get(p.creator_id) ?? null,
+        going: counts.get(p.id) ?? 0,
+        attendees: sortedIds
+          .slice(0, 4)
+          .map((uid) => attendeeMap.get(uid))
+          .filter((x): x is { id: string; name: string; avatar_url: string | null } => !!x)
+          .map((x) => ({ name: x.name, avatar_url: x.avatar_url })),
+        knownAttendeeName: knownProfile?.name,
+      };
+    });
 
     // intercalar anuncios cada ~7 cartas
     const { data: ads } = await supabase.from("ads").select("*").order("created_at", { ascending: false }).limit(5);
@@ -280,6 +300,11 @@ function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { 
         )}
       </div>
       <h2 className="text-[2.75rem] leading-[1.05]">{plan.title}</h2>
+      {plan.knownAttendeeName && (
+        <p className="text-sm font-semibold mt-1 px-2 py-1 rounded-full inline-block" style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
+          👋 Con {plan.knownAttendeeName}, con quien ya coincidiste
+        </p>
+      )}
       <p className="mt-3 text-base flex-1 overflow-hidden">{plan.description}</p>
 
       <div className="mt-3 space-y-1.5 text-sm">
