@@ -56,8 +56,8 @@ function AuthPage() {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-6 gap-8">
       <div className="text-center">
-        <h1 style={{ fontSize: 56, fontWeight: 800, color: "var(--ink)", letterSpacing: "-0.02em" }}>
-          Quedada
+        <h1 style={{ fontSize: 46, fontWeight: 800, color: "var(--ink)", letterSpacing: "-0.02em" }}>
+          ¿Kedamos?
         </h1>
         <p className="text-[var(--ink)]/60 -mt-1" style={{ fontSize: 17 }}>
           el tablón de planes con desconocidos
