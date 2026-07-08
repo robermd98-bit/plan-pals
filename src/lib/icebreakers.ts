@@ -34,3 +34,24 @@ export const ICEBREAKERS: string[] = [
 export function randomIcebreaker(): string {
   return ICEBREAKERS[Math.floor(Math.random() * ICEBREAKERS.length)];
 }
+
+export const ROOM_ICEBREAKERS: string[] = [
+  "Sé el primero en romper el hielo en esta sala",
+  "Aquí no muerde nadie. Dilo tú primero.",
+  "Esta sala está pidiendo a gritos un primer mensaje.",
+  "Todos están esperando a que alguien hable. Sé esa persona.",
+  "Un simple \"¡hola!\" ya vale para empezar.",
+  "Pregunta algo random y verás cómo aparece gente.",
+  "Nadie ha escrito nada aún. Toda leyenda empieza así.",
+  "El primer mensaje siempre es el más raro. Quítatelo de encima.",
+  "Esta sala todavía no tiene voz. Préstale la tuya.",
+  "Manda un mensaje y gánate el título de rompehielos oficial.",
+  "Nadie se va a reír de tu primer mensaje. Bueno, un poco, pero con cariño.",
+  "El hielo no se rompe solo, dale un empujón.",
+  "Una pregunta random rompe más hielo que un \"hola\" seco.",
+  "Todo empieza con una frase random. Esta puede ser la tuya.",
+];
+
+export function randomRoomIcebreaker(): string {
+  return ROOM_ICEBREAKERS[Math.floor(Math.random() * ROOM_ICEBREAKERS.length)];
+}

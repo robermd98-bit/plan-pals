@@ -1,11 +1,35 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { categoryEmoji, categoryLabel } from "@/lib/categories";
+import { categoryEmoji, categoryLabel, paperColor } from "@/lib/categories";
+import { randomRoomIcebreaker } from "@/lib/icebreakers";
 import { ArrowLeft, Send } from "lucide-react";
 
 type Message = { id: string; category: string; sender_id: string; text: string; created_at: string };
 type Profile = { id: string; name: string; avatar_url: string | null };
+
+const AVATAR_TINTS = ["#E76F51", "#2A9D8F", "#E9C46A", "#6D597A", "#457B9D", "#F4A261"];
+function tintFor(name: string) {
+  let hash = 0;
+  for (let i = 0; i < name.length; i++) hash = name.charCodeAt(i) + ((hash << 5) - hash);
+  return AVATAR_TINTS[Math.abs(hash) % AVATAR_TINTS.length];
+}
+
+function MiniAvatar({ name, avatarUrl }: { name: string; avatarUrl?: string | null }) {
+  return (
+    <div
+      className="w-7 h-7 rounded-full flex items-center justify-center text-[10px] font-bold text-white shrink-0 overflow-hidden mb-1"
+      style={{ backgroundColor: avatarUrl ? undefined : tintFor(name || "?") }}
+    >
+      {avatarUrl ? (
+        <img src={avatarUrl} alt="" className="w-full h-full object-cover" />
+      ) : (
+        (name || "?").slice(0, 1).toUpperCase()
+      )}
+    </div>
+  );
+}
 
 export const Route = createFileRoute("/_authenticated/comunidad/$category")({
   component: CommunityRoom,
@@ -18,8 +42,13 @@ function CommunityRoom() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [profiles, setProfiles] = useState<Record<string, Profile>>({});
   const [text, setText] = useState("");
+  const [icebreaker] = useState(randomRoomIcebreaker);
   const scrollRef = useRef<HTMLDivElement>(null);
   const profilesRef = useRef<Record<string, Profile>>({});
+
+  const isGeneral = category === "general";
+  const headerBg = isGeneral ? "var(--pin)" : paperColor(category);
+  const headerFg = isGeneral ? "var(--pin-foreground)" : "var(--ink)";
 
   async function ensureProfiles(ids: string[]) {
     const missing = Array.from(new Set(ids)).filter((id) => !profilesRef.current[id]);
@@ -74,28 +103,33 @@ function CommunityRoom() {
 
   return (
     <div className="min-h-screen flex flex-col pb-4">
-      <header className="flex items-center gap-3 p-4">
-        <button onClick={() => navigate({ to: "/comunidad" })} style={{ color: "var(--ink)" }}>
+      <header className="flex items-center gap-3 p-4" style={{ backgroundColor: headerBg, color: headerFg }}>
+        <button onClick={() => navigate({ to: "/comunidad" })} style={{ color: headerFg }}>
           <ArrowLeft />
         </button>
-        <h1 className="text-xl font-bold" style={{ color: "var(--ink)" }}>
-          {category === "general" ? "💬 Chat general" : `${categoryEmoji(category)} Sala de ${categoryLabel(category)}`}
+        <h1 className="text-xl font-bold">
+          {isGeneral ? "💬 Chat general" : `${categoryEmoji(category)} Sala de ${categoryLabel(category)}`}
         </h1>
       </header>
 
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 space-y-2">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pt-3 space-y-2">
         {messages.length === 0 && (
-          <p className="text-center text-[var(--ink)]/50 text-sm mt-10">
-            Nadie ha escrito todavía en esta sala. Sé el primero.
-          </p>
+          <p className="text-center text-[var(--ink)]/50 text-sm mt-10">{icebreaker}</p>
         )}
         {messages.map((m) => {
           const own = m.sender_id === userId;
           const author = profiles[m.sender_id];
           return (
-            <div key={m.id} className={`flex ${own ? "justify-end" : "justify-start"}`}>
+            <motion.div
+              key={m.id}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.25 }}
+              className={`flex items-end gap-2 ${own ? "justify-end" : "justify-start"}`}
+            >
+              {!own && <MiniAvatar name={author?.name ?? "Alguien"} avatarUrl={author?.avatar_url} />}
               <div
-                className="max-w-[75%] rounded-2xl px-3 py-2 paper-shadow"
+                className="max-w-[70%] rounded-2xl px-3 py-2 paper-shadow"
                 style={{
                   backgroundColor: own ? "var(--pin)" : "#FFFFFF",
                   color: own ? "var(--pin-foreground)" : "var(--ink)",
@@ -105,7 +139,7 @@ function CommunityRoom() {
                 {!own && <p className="text-[11px] opacity-70 mb-0.5 font-semibold">{author?.name ?? "Alguien"}</p>}
                 <p className="text-sm">{m.text}</p>
               </div>
-            </div>
+            </motion.div>
           );
         })}
       </div>
