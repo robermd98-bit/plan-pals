@@ -1,7 +1,7 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { categoryEmoji } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { RubberButton } from "@/components/RubberButton";
 import { PaperNote } from "@/components/PaperNote";
 import { ArrowLeft, MessageCircle } from "lucide-react";
@@ -70,7 +70,7 @@ function ClubPage() {
 
       <PaperNote category={category} rotation={0}>
         <div className="flex items-center gap-3">
-          <span className="text-4xl">{categoryEmoji(category)}</span>
+          <CategoryIcon category={category} size={38} />
           <div>
             <h1 className="text-2xl font-bold">{company}</h1>
             <p className="text-sm opacity-70">{memberCount} {memberCount === 1 ? "miembro" : "miembros"} del club</p>
@@ -110,7 +110,7 @@ function ClubPage() {
               className="flex items-center gap-3 rounded-xl px-3 py-2 bg-[var(--card)]"
               style={{ border: "1px solid var(--border)" }}
             >
-              <span className="text-2xl">{categoryEmoji(p.category)}</span>
+              <CategoryIcon category={p.category} size={22} />
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-semibold truncate">{p.title}</p>
                 <p className="text-xs text-[var(--ink)]/60">{p.location} · {p.time.slice(0, 5)}</p>

@@ -2,7 +2,8 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
-import { categoryEmoji, categoryLabel } from "@/lib/categories";
+import { categoryLabel } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 type Plan = {
   id: string;
@@ -87,7 +88,7 @@ function MyPlans() {
               <Link key={p.id} to="/plan/$id" params={{ id: p.id }}
                 className="flex items-center gap-3 rounded-xl px-3 py-2 bg-[var(--card)]"
                 style={{ border: "1px solid var(--border)" }}>
-                <span className="text-2xl">{categoryEmoji(p.category)}</span>
+                <CategoryIcon category={p.category} size={22} />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold truncate">{p.title}</p>
                   <p className="text-xs text-[var(--ink)]/60">{formatDate(p.date)} · {p.time.slice(0, 5)}</p>
@@ -127,7 +128,7 @@ function PlanRow({ plan, idx }: { plan: Plan; idx: number }) {
     <Link to="/plan/$id" params={{ id: plan.id }}>
       <PaperNote category={plan.category} rotation={(idx % 2 === 0 ? -1 : 1.5)}>
         <div className="flex items-center gap-3">
-          <span className="text-3xl">{categoryEmoji(plan.category)}</span>
+          <CategoryIcon category={plan.category} size={30} />
           <div className="flex-1">
             <p className="text-xs opacity-70 uppercase tracking-wider">{categoryLabel(plan.category)}</p>
             <h3 className="text-2xl leading-tight">{plan.title}</h3>

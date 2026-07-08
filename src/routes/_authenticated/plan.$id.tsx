@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
-import { categoryEmoji, categoryLabel } from "@/lib/categories";
+import { categoryLabel } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { randomIcebreaker } from "@/lib/icebreakers";
 import { joinPlan, JOIN_SYSTEM_MARK } from "@/lib/joinPlan";
 import { tierFor } from "@/lib/tiers";
@@ -106,7 +107,9 @@ function PlanDetail() {
         <button onClick={() => navigate({ to: "/mis-planes" })} className="text-[var(--ink)]">
           <ArrowLeft />
         </button>
-        <h1 className="text-2xl font-bold" style={{ color: "var(--ink)" }}>{categoryEmoji(plan.category)} {categoryLabel(plan.category)}</h1>
+        <h1 className="text-2xl font-bold inline-flex items-center gap-2" style={{ color: "var(--ink)" }}>
+          <CategoryIcon category={plan.category} size={22} /> {categoryLabel(plan.category)}
+        </h1>
       </header>
 
       <div className="px-4">

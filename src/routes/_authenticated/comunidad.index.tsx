@@ -1,8 +1,10 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { CATEGORIES, categoryEmoji } from "@/lib/categories";
+import { CATEGORIES } from "@/lib/categories";
 import { PaperNote } from "@/components/PaperNote";
+import { CategoryIcon } from "@/components/CategoryIcon";
+import { MessageCircle } from "lucide-react";
 
 export const Route = createFileRoute("/_authenticated/comunidad/")({
   component: Comunidad,
@@ -45,7 +47,7 @@ function Comunidad() {
       <div className="grid gap-3">
         <Link to="/comunidad/$category" params={{ category: "general" }}>
           <div className="rounded-2xl px-4 py-3 flex items-center gap-3" style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
-            <span className="text-3xl">💬</span>
+            <MessageCircle size={30} color="var(--pin-foreground)" strokeWidth={2.25} />
             <div>
               <h2 className="text-xl font-semibold">General</h2>
               <p className="text-xs opacity-80">Para hablar de lo que sea, con todo el mundo</p>
@@ -56,7 +58,7 @@ function Comunidad() {
           <Link key={c.id} to="/comunidad/$category" params={{ category: c.id }}>
             <PaperNote category={c.id} rotation={0}>
               <div className="flex items-center gap-3">
-                <span className="text-3xl">{c.emoji}</span>
+                <CategoryIcon category={c.id} size={30} />
                 <div>
                   <h2 className="text-xl font-semibold" style={{ color: "var(--ink)" }}>{c.label}</h2>
                   <p className="text-xs opacity-70">Entrar a la sala</p>
@@ -78,7 +80,7 @@ function Comunidad() {
             className="flex items-center gap-3 rounded-xl px-3 py-2 bg-[var(--card)]"
             style={{ border: "1px solid var(--border)" }}
           >
-            <span className="text-2xl">{categoryEmoji(c.category)}</span>
+            <CategoryIcon category={c.category} size={22} />
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold truncate">{c.company_name}</p>
             </div>

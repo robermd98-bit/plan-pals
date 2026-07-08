@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { CATEGORIES, type Category } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 export const Route = createFileRoute("/_authenticated/crear")({
   component: CreatePlan,
@@ -61,12 +62,12 @@ function CreatePlan() {
             <div className="flex flex-wrap gap-2">
               {CATEGORIES.map((c) => (
                 <button type="button" key={c.id} onClick={() => setCategory(c.id)}
-                  className="rubber-button text-sm"
+                  className="rubber-button text-sm inline-flex items-center gap-1.5"
                   style={{
                     backgroundColor: category === c.id ? "var(--pin)" : "#FFFFFF",
                     color: category === c.id ? "var(--pin-foreground)" : "var(--ink)",
                   }}>
-                  {c.emoji} {c.label}
+                  <CategoryIcon category={c.id} size={15} tinted={category !== c.id} /> {c.label}
                 </button>
               ))}
             </div>

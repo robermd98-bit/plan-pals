@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { CATEGORIES, type Category } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 export const Route = createFileRoute("/_authenticated/onboarding")({
   component: Onboarding,
@@ -111,13 +112,13 @@ function Onboarding() {
                 const on = interests.includes(c.id);
                 return (
                   <button type="button" key={c.id} onClick={() => toggle(c.id)}
-                    className="rubber-button text-sm"
+                    className="rubber-button text-sm inline-flex items-center gap-1.5"
                     style={{
                       backgroundColor: on ? "var(--pin)" : "#FFFFFF",
                       color: on ? "var(--pin-foreground)" : "var(--ink)",
                     }}
                   >
-                    {c.emoji} {c.label}
+                    <CategoryIcon category={c.id} size={15} tinted={!on} /> {c.label}
                   </button>
                 );
               })}

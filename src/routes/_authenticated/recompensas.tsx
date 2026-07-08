@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
-import { categoryEmoji } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { ArrowLeft } from "lucide-react";
 
 type Reward = {
@@ -79,8 +79,8 @@ function Rewards() {
             <PaperNote key={r.id} category={r.category} rotation={0} className="!py-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="flex-1">
-                  <p className="text-xs uppercase tracking-wider opacity-70">
-                    {categoryEmoji(r.category)} {r.company_name}
+                  <p className="text-xs uppercase tracking-wider opacity-70 inline-flex items-center gap-1">
+                    <CategoryIcon category={r.category} size={13} /> {r.company_name}
                   </p>
                   <h3 className="text-lg font-semibold leading-tight mt-0.5">{r.title}</h3>
                   {r.description && <p className="text-xs opacity-70 mt-1">{r.description}</p>}

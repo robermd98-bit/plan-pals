@@ -6,7 +6,8 @@ import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import { joinPlan } from "@/lib/joinPlan";
-import { Calendar, MapPin, Users, Heart, X, MessageCircle } from "lucide-react";
+import { Calendar, MapPin, Users, Heart, X, MessageCircle, Sparkles } from "lucide-react";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 type Plan = {
   id: string;
@@ -243,9 +244,9 @@ function Discover() {
       </header>
 
       <div className="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4">
-        <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="Todo" emoji="✨" />
+        <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="Todo" icon={<Sparkles size={15} />} />
         {CATEGORIES.map((c) => (
-          <FilterChip key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)} label={c.label} emoji={c.emoji} tint={c.paperVar} />
+          <FilterChip key={c.id} active={filter === c.id} onClick={() => setFilter(c.id)} label={c.label} icon={<CategoryIcon category={c.id} size={15} tinted={filter !== c.id} />} tint={c.paperVar} />
         ))}
       </div>
 
@@ -293,19 +294,19 @@ function Discover() {
   );
 }
 
-function FilterChip({ active, onClick, label, emoji, tint }: { active: boolean; onClick: () => void; label: string; emoji: string; tint?: string }) {
+function FilterChip({ active, onClick, label, icon, tint }: { active: boolean; onClick: () => void; label: string; icon: React.ReactNode; tint?: string }) {
   const activeBg = tint ?? "var(--pin)";
   const activeFg = tint ? "var(--ink)" : "var(--pin-foreground)";
   return (
     <button
       onClick={onClick}
-      className="rubber-button shrink-0 text-sm"
+      className="rubber-button shrink-0 text-sm inline-flex items-center gap-1.5"
       style={{
         backgroundColor: active ? activeBg : "#FFFFFF",
         color: active ? activeFg : "var(--ink)",
       }}
     >
-      {emoji} {label}
+      {icon} {label}
     </button>
   );
 }
@@ -363,7 +364,8 @@ function PlanCard({ plan, confirming = false, isTop = false }: { plan: Plan & { 
       pulsing={isTop && !confirming}
     >
       <div className="flex items-center justify-between mb-2">
-        <span className="text-sm font-bold uppercase tracking-[0.15em] opacity-70">
+        <span className="text-sm font-bold uppercase tracking-[0.15em] opacity-70 inline-flex items-center gap-1.5">
+          <CategoryIcon category={plan.category} size={15} />
           {categoryLabel(plan.category)}
         </span>
         {plan.is_hosted && (

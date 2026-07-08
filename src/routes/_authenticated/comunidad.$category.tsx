@@ -2,11 +2,12 @@ import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
-import { categoryEmoji, categoryLabel, paperColor } from "@/lib/categories";
+import { categoryLabel, paperColor } from "@/lib/categories";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { randomRoomIcebreaker } from "@/lib/icebreakers";
 import { KedamosLogo } from "@/components/KedamosLogo";
 import { PulseRings } from "@/components/PaperNote";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, MessageCircle } from "lucide-react";
 
 type Message = { id: string; category: string; sender_id: string; text: string; created_at: string };
 type Profile = { id: string; name: string; avatar_url: string | null };
@@ -109,8 +110,9 @@ function CommunityRoom() {
         <button onClick={() => navigate({ to: "/comunidad" })} style={{ color: headerFg }}>
           <ArrowLeft />
         </button>
-        <h1 className="text-xl font-bold">
-          {isGeneral ? "💬 Chat general" : `${categoryEmoji(category)} Sala de ${categoryLabel(category)}`}
+        <h1 className="text-xl font-bold inline-flex items-center gap-2">
+          {isGeneral ? <MessageCircle size={22} /> : <CategoryIcon category={category} size={22} tinted={false} />}
+          {isGeneral ? "Chat general" : `Sala de ${categoryLabel(category)}`}
         </h1>
       </header>
 
