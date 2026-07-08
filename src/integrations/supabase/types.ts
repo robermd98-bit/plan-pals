@@ -77,6 +77,27 @@ export type Database = {
         }
         Relationships: []
       }
+      club_members: {
+        Row: {
+          company_name: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          company_name: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          company_name?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       community_messages: {
         Row: {
           category: string
