@@ -4,6 +4,8 @@ import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
 import { categoryEmoji, categoryLabel, paperColor } from "@/lib/categories";
 import { randomRoomIcebreaker } from "@/lib/icebreakers";
+import { KedamosLogo } from "@/components/KedamosLogo";
+import { PulseRings } from "@/components/PaperNote";
 import { ArrowLeft, Send } from "lucide-react";
 
 type Message = { id: string; category: string; sender_id: string; text: string; created_at: string };
@@ -114,7 +116,18 @@ function CommunityRoom() {
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 pt-3 space-y-2">
         {messages.length === 0 && (
-          <p className="text-center text-[var(--ink)]/50 text-sm mt-10">{icebreaker}</p>
+          <div className="flex flex-col items-center justify-center mt-16 gap-4">
+            <motion.div
+              className="relative"
+              style={{ width: 110, height: 110 }}
+              animate={{ y: [0, -12, 0], rotate: [-4, 4, -4] }}
+              transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            >
+              <PulseRings color="var(--pin)" rounded="rounded-[26%]" expand={1.35} count={2} />
+              <KedamosLogo size={110} />
+            </motion.div>
+            <p className="text-center text-[var(--ink)]/50 text-sm max-w-[220px]">{icebreaker}</p>
+          </div>
         )}
         {messages.map((m) => {
           const own = m.sender_id === userId;
