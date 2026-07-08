@@ -20,6 +20,7 @@ import { Route as AuthenticatedEmpresaRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedCrearRouteImport } from './routes/_authenticated/crear'
 import { Route as AuthenticatedComunidadRouteImport } from './routes/_authenticated/comunidad'
 import { Route as AuthenticatedAnfitrionRouteImport } from './routes/_authenticated/anfitrion'
+import { Route as AuthenticatedComunidadIndexRouteImport } from './routes/_authenticated/comunidad.index'
 import { Route as AuthenticatedUIdRouteImport } from './routes/_authenticated/u.$id'
 import { Route as AuthenticatedPlanIdRouteImport } from './routes/_authenticated/plan.$id'
 import { Route as AuthenticatedComunidadCategoryRouteImport } from './routes/_authenticated/comunidad.$category'
@@ -80,6 +81,12 @@ const AuthenticatedAnfitrionRoute = AuthenticatedAnfitrionRouteImport.update({
   path: '/anfitrion',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedComunidadIndexRoute =
+  AuthenticatedComunidadIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedComunidadRoute,
+  } as any)
 const AuthenticatedUIdRoute = AuthenticatedUIdRouteImport.update({
   id: '/u/$id',
   path: '/u/$id',
@@ -118,11 +125,11 @@ export interface FileRoutesByFullPath {
   '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
+  '/comunidad/': typeof AuthenticatedComunidadIndexRoute
 }
 export interface FileRoutesByTo {
   '/auth': typeof AuthRoute
   '/anfitrion': typeof AuthenticatedAnfitrionRoute
-  '/comunidad': typeof AuthenticatedComunidadRouteWithChildren
   '/crear': typeof AuthenticatedCrearRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
@@ -134,6 +141,7 @@ export interface FileRoutesByTo {
   '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/plan/$id': typeof AuthenticatedPlanIdRoute
   '/u/$id': typeof AuthenticatedUIdRoute
+  '/comunidad': typeof AuthenticatedComunidadIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -152,6 +160,7 @@ export interface FileRoutesById {
   '/_authenticated/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
   '/_authenticated/plan/$id': typeof AuthenticatedPlanIdRoute
   '/_authenticated/u/$id': typeof AuthenticatedUIdRoute
+  '/_authenticated/comunidad/': typeof AuthenticatedComunidadIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -170,11 +179,11 @@ export interface FileRouteTypes {
     | '/comunidad/$category'
     | '/plan/$id'
     | '/u/$id'
+    | '/comunidad/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/auth'
     | '/anfitrion'
-    | '/comunidad'
     | '/crear'
     | '/empresa'
     | '/mis-planes'
@@ -186,6 +195,7 @@ export interface FileRouteTypes {
     | '/comunidad/$category'
     | '/plan/$id'
     | '/u/$id'
+    | '/comunidad'
   id:
     | '__root__'
     | '/_authenticated'
@@ -203,6 +213,7 @@ export interface FileRouteTypes {
     | '/_authenticated/comunidad/$category'
     | '/_authenticated/plan/$id'
     | '/_authenticated/u/$id'
+    | '/_authenticated/comunidad/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -289,6 +300,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedAnfitrionRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/comunidad/': {
+      id: '/_authenticated/comunidad/'
+      path: '/'
+      fullPath: '/comunidad/'
+      preLoaderRoute: typeof AuthenticatedComunidadIndexRouteImport
+      parentRoute: typeof AuthenticatedComunidadRoute
+    }
     '/_authenticated/u/$id': {
       id: '/_authenticated/u/$id'
       path: '/u/$id'
@@ -322,11 +340,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedComunidadRouteChildren {
   AuthenticatedComunidadCategoryRoute: typeof AuthenticatedComunidadCategoryRoute
+  AuthenticatedComunidadIndexRoute: typeof AuthenticatedComunidadIndexRoute
 }
 
 const AuthenticatedComunidadRouteChildren: AuthenticatedComunidadRouteChildren =
   {
     AuthenticatedComunidadCategoryRoute: AuthenticatedComunidadCategoryRoute,
+    AuthenticatedComunidadIndexRoute: AuthenticatedComunidadIndexRoute,
   }
 
 const AuthenticatedComunidadRouteWithChildren =
@@ -374,3 +394,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
