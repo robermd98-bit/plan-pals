@@ -6,8 +6,9 @@ import { PaperNote } from "@/components/PaperNote";
 import { RubberButton } from "@/components/RubberButton";
 import { CATEGORIES, categoryLabel, type Category } from "@/lib/categories";
 import { joinPlan } from "@/lib/joinPlan";
-import { Calendar, MapPin, Users, Heart, X, MessageCircle, Sparkles } from "lucide-react";
+import { Calendar, MapPin, Users, Heart, X, MessageCircle, Sparkles, Radar as RadarIcon } from "lucide-react";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { locationMatchesCity } from "@/lib/geo";
 
 type Plan = {
   id: string;
@@ -106,8 +107,14 @@ function Discover() {
   const [filter, setFilter] = useState<Category | "all">("all");
   const [items, setItems] = useState<FeedItem[] | null>(null);
   const [confirmingId, setConfirmingId] = useState<string | null>(null);
+  const [myCity, setMyCity] = useState<string | null>(null);
+  const [showingOtherCities, setShowingOtherCities] = useState(false);
 
   async function load() {
+    const { data: myProfile } = await supabase.from("profiles").select("city").eq("id", userId).maybeSingle();
+    const city = myProfile?.city ?? "";
+    setMyCity(city || null);
+
     // joined plan ids to exclude
     const { data: joined } = await supabase
       .from("plan_participants")
@@ -134,7 +141,12 @@ function Discover() {
       .order("date", { ascending: true });
     if (filter !== "all") q = q.eq("category", filter);
     const { data: plans } = await q;
-    const filtered = (plans ?? []).filter((p) => !joinedIds.has(p.id));
+    const allPlans = plans ?? [];
+    const nearby = city ? allPlans.filter((p) => locationMatchesCity(p.location, city)) : allPlans;
+    const usingFallback = !!city && nearby.length === 0 && allPlans.length > 0;
+    setShowingOtherCities(usingFallback);
+    const scoped = usingFallback ? allPlans : nearby;
+    const filtered = scoped.filter((p) => !joinedIds.has(p.id));
 
     // creators
     const ids = Array.from(new Set(filtered.map((p) => p.creator_id)));
@@ -232,16 +244,30 @@ function Discover() {
       <header className="flex items-start justify-between mb-3 gap-2">
         <div>
           <h1 className="text-4xl font-extrabold" style={{ color: "var(--ink)" }}>El tablón</h1>
-          <span className="text-[var(--ink)]/50 text-sm">desliza para apuntarte</span>
+          <span className="text-[var(--ink)]/50 text-sm">
+            desliza para apuntarte{myCity ? ` · ${myCity}` : ""}
+          </span>
         </div>
         <div className="flex flex-col items-end gap-1.5 shrink-0">
           <GeneralChatPreview />
-          <Link to="/comunidad" className="flex items-center gap-1" style={{ color: "var(--ink)" }}>
-            <MessageCircle size={20} />
-            <span className="text-xs font-semibold">Salas</span>
-          </Link>
+          <div className="flex items-center gap-3">
+            <Link to="/comunidad" className="flex items-center gap-1" style={{ color: "var(--ink)" }}>
+              <MessageCircle size={20} />
+              <span className="text-xs font-semibold">Salas</span>
+            </Link>
+            <Link to="/radar" className="flex items-center gap-1" style={{ color: "var(--ink)" }}>
+              <RadarIcon size={20} />
+              <span className="text-xs font-semibold">Radar</span>
+            </Link>
+          </div>
         </div>
       </header>
+
+      {showingOtherCities && (
+        <p className="text-xs px-3 py-2 rounded-lg mb-3" style={{ backgroundColor: "var(--muted)", color: "var(--ink)" }}>
+          Todavía no hay planes en {myCity}. Mientras tanto, aquí tienes de otras ciudades.
+        </p>
+      )}
 
       <div className="flex gap-2 overflow-x-auto pb-3 -mx-4 px-4">
         <FilterChip active={filter === "all"} onClick={() => setFilter("all")} label="Todo" icon={<Sparkles size={15} />} />

@@ -13,6 +13,7 @@ import { Route as AuthRouteImport } from './routes/auth'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
 import { Route as AuthenticatedRecompensasRouteImport } from './routes/_authenticated/recompensas'
+import { Route as AuthenticatedRadarRouteImport } from './routes/_authenticated/radar'
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedMisPlanesRouteImport } from './routes/_authenticated/mis-planes'
@@ -47,6 +48,11 @@ const AuthenticatedRecompensasRoute =
     path: '/recompensas',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRadarRoute = AuthenticatedRadarRouteImport.update({
+  id: '/radar',
+  path: '/radar',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
 const AuthenticatedPerfilRoute = AuthenticatedPerfilRouteImport.update({
   id: '/perfil',
   path: '/perfil',
@@ -127,6 +133,7 @@ export interface FileRoutesByFullPath {
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/radar': typeof AuthenticatedRadarRoute
   '/recompensas': typeof AuthenticatedRecompensasRoute
   '/clubes/$company': typeof AuthenticatedClubesCompanyRoute
   '/comunidad/$category': typeof AuthenticatedComunidadCategoryRoute
@@ -143,6 +150,7 @@ export interface FileRoutesByTo {
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
+  '/radar': typeof AuthenticatedRadarRoute
   '/recompensas': typeof AuthenticatedRecompensasRoute
   '/': typeof AuthenticatedIndexRoute
   '/clubes/$company': typeof AuthenticatedClubesCompanyRoute
@@ -163,6 +171,7 @@ export interface FileRoutesById {
   '/_authenticated/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
+  '/_authenticated/radar': typeof AuthenticatedRadarRoute
   '/_authenticated/recompensas': typeof AuthenticatedRecompensasRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/clubes/$company': typeof AuthenticatedClubesCompanyRoute
@@ -184,6 +193,7 @@ export interface FileRouteTypes {
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
+    | '/radar'
     | '/recompensas'
     | '/clubes/$company'
     | '/comunidad/$category'
@@ -200,6 +210,7 @@ export interface FileRouteTypes {
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
+    | '/radar'
     | '/recompensas'
     | '/'
     | '/clubes/$company'
@@ -219,6 +230,7 @@ export interface FileRouteTypes {
     | '/_authenticated/mis-planes'
     | '/_authenticated/onboarding'
     | '/_authenticated/perfil'
+    | '/_authenticated/radar'
     | '/_authenticated/recompensas'
     | '/_authenticated/'
     | '/_authenticated/clubes/$company'
@@ -261,6 +273,13 @@ declare module '@tanstack/react-router' {
       path: '/recompensas'
       fullPath: '/recompensas'
       preLoaderRoute: typeof AuthenticatedRecompensasRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/radar': {
+      id: '/_authenticated/radar'
+      path: '/radar'
+      fullPath: '/radar'
+      preLoaderRoute: typeof AuthenticatedRadarRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/perfil': {
@@ -382,6 +401,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedMisPlanesRoute: typeof AuthenticatedMisPlanesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
+  AuthenticatedRadarRoute: typeof AuthenticatedRadarRoute
   AuthenticatedRecompensasRoute: typeof AuthenticatedRecompensasRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedClubesCompanyRoute: typeof AuthenticatedClubesCompanyRoute
@@ -398,6 +418,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedMisPlanesRoute: AuthenticatedMisPlanesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,
+  AuthenticatedRadarRoute: AuthenticatedRadarRoute,
   AuthenticatedRecompensasRoute: AuthenticatedRecompensasRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedClubesCompanyRoute: AuthenticatedClubesCompanyRoute,
@@ -415,3 +436,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
