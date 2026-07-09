@@ -214,6 +214,41 @@ export type Database = {
         }
         Relationships: []
       }
+      plan_memories: {
+        Row: {
+          created_at: string
+          id: string
+          photo_url: string | null
+          plan_id: string
+          text: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          photo_url?: string | null
+          plan_id: string
+          text?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          photo_url?: string | null
+          plan_id?: string
+          text?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "plan_memories_plan_id_fkey"
+            columns: ["plan_id"]
+            isOneToOne: false
+            referencedRelation: "plans"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       plan_participants: {
         Row: {
           joined_at: string
@@ -284,6 +319,8 @@ export type Database = {
           is_hosted: boolean
           location: string
           max_people: number
+          recurrence: string | null
+          recurring_group_id: string | null
           time: string
           title: string
         }
@@ -301,6 +338,8 @@ export type Database = {
           is_hosted?: boolean
           location: string
           max_people: number
+          recurrence?: string | null
+          recurring_group_id?: string | null
           time: string
           title: string
         }
@@ -318,6 +357,8 @@ export type Database = {
           is_hosted?: boolean
           location?: string
           max_people?: number
+          recurrence?: string | null
+          recurring_group_id?: string | null
           time?: string
           title?: string
         }
