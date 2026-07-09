@@ -286,8 +286,6 @@ export type Database = {
           max_people: number
           time: string
           title: string
-          recurring_group_id: string | null
-          recurrence: string | null
         }
         Insert: {
           activity_id?: string | null
@@ -305,8 +303,6 @@ export type Database = {
           max_people: number
           time: string
           title: string
-          recurring_group_id?: string | null
-          recurrence?: string | null
         }
         Update: {
           activity_id?: string | null
@@ -324,8 +320,6 @@ export type Database = {
           max_people?: number
           time?: string
           title?: string
-          recurring_group_id?: string | null
-          recurrence?: string | null
         }
         Relationships: [
           {
@@ -365,41 +359,6 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "points_ledger_plan_id_fkey"
-            columns: ["plan_id"]
-            isOneToOne: false
-            referencedRelation: "plans"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
-      plan_memories: {
-        Row: {
-          id: string
-          plan_id: string
-          user_id: string
-          photo_url: string | null
-          text: string | null
-          created_at: string
-        }
-        Insert: {
-          id?: string
-          plan_id: string
-          user_id: string
-          photo_url?: string | null
-          text?: string | null
-          created_at?: string
-        }
-        Update: {
-          id?: string
-          plan_id?: string
-          user_id?: string
-          photo_url?: string | null
-          text?: string | null
-          created_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "plan_memories_plan_id_fkey"
             columns: ["plan_id"]
             isOneToOne: false
             referencedRelation: "plans"
