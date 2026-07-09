@@ -16,6 +16,7 @@ import { Route as AuthenticatedRecompensasRouteImport } from './routes/_authenti
 import { Route as AuthenticatedPerfilRouteImport } from './routes/_authenticated/perfil'
 import { Route as AuthenticatedOnboardingRouteImport } from './routes/_authenticated/onboarding'
 import { Route as AuthenticatedMisPlanesRouteImport } from './routes/_authenticated/mis-planes'
+import { Route as AuthenticatedMiGenteRouteImport } from './routes/_authenticated/mi-gente'
 import { Route as AuthenticatedEmpresaRouteImport } from './routes/_authenticated/empresa'
 import { Route as AuthenticatedCrearRouteImport } from './routes/_authenticated/crear'
 import { Route as AuthenticatedComunidadRouteImport } from './routes/_authenticated/comunidad'
@@ -59,6 +60,11 @@ const AuthenticatedOnboardingRoute = AuthenticatedOnboardingRouteImport.update({
 const AuthenticatedMisPlanesRoute = AuthenticatedMisPlanesRouteImport.update({
   id: '/mis-planes',
   path: '/mis-planes',
+  getParentRoute: () => AuthenticatedRouteRoute,
+} as any)
+const AuthenticatedMiGenteRoute = AuthenticatedMiGenteRouteImport.update({
+  id: '/mi-gente',
+  path: '/mi-gente',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
 const AuthenticatedEmpresaRoute = AuthenticatedEmpresaRouteImport.update({
@@ -117,6 +123,7 @@ export interface FileRoutesByFullPath {
   '/comunidad': typeof AuthenticatedComunidadRouteWithChildren
   '/crear': typeof AuthenticatedCrearRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
+  '/mi-gente': typeof AuthenticatedMiGenteRoute
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -132,6 +139,7 @@ export interface FileRoutesByTo {
   '/anfitrion': typeof AuthenticatedAnfitrionRoute
   '/crear': typeof AuthenticatedCrearRoute
   '/empresa': typeof AuthenticatedEmpresaRoute
+  '/mi-gente': typeof AuthenticatedMiGenteRoute
   '/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/onboarding': typeof AuthenticatedOnboardingRoute
   '/perfil': typeof AuthenticatedPerfilRoute
@@ -151,6 +159,7 @@ export interface FileRoutesById {
   '/_authenticated/comunidad': typeof AuthenticatedComunidadRouteWithChildren
   '/_authenticated/crear': typeof AuthenticatedCrearRoute
   '/_authenticated/empresa': typeof AuthenticatedEmpresaRoute
+  '/_authenticated/mi-gente': typeof AuthenticatedMiGenteRoute
   '/_authenticated/mis-planes': typeof AuthenticatedMisPlanesRoute
   '/_authenticated/onboarding': typeof AuthenticatedOnboardingRoute
   '/_authenticated/perfil': typeof AuthenticatedPerfilRoute
@@ -171,6 +180,7 @@ export interface FileRouteTypes {
     | '/comunidad'
     | '/crear'
     | '/empresa'
+    | '/mi-gente'
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
@@ -186,6 +196,7 @@ export interface FileRouteTypes {
     | '/anfitrion'
     | '/crear'
     | '/empresa'
+    | '/mi-gente'
     | '/mis-planes'
     | '/onboarding'
     | '/perfil'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/_authenticated/comunidad'
     | '/_authenticated/crear'
     | '/_authenticated/empresa'
+    | '/_authenticated/mi-gente'
     | '/_authenticated/mis-planes'
     | '/_authenticated/onboarding'
     | '/_authenticated/perfil'
@@ -270,6 +282,13 @@ declare module '@tanstack/react-router' {
       path: '/mis-planes'
       fullPath: '/mis-planes'
       preLoaderRoute: typeof AuthenticatedMisPlanesRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/mi-gente': {
+      id: '/_authenticated/mi-gente'
+      path: '/mi-gente'
+      fullPath: '/mi-gente'
+      preLoaderRoute: typeof AuthenticatedMiGenteRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/empresa': {
@@ -359,6 +378,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedComunidadRoute: typeof AuthenticatedComunidadRouteWithChildren
   AuthenticatedCrearRoute: typeof AuthenticatedCrearRoute
   AuthenticatedEmpresaRoute: typeof AuthenticatedEmpresaRoute
+  AuthenticatedMiGenteRoute: typeof AuthenticatedMiGenteRoute
   AuthenticatedMisPlanesRoute: typeof AuthenticatedMisPlanesRoute
   AuthenticatedOnboardingRoute: typeof AuthenticatedOnboardingRoute
   AuthenticatedPerfilRoute: typeof AuthenticatedPerfilRoute
@@ -374,6 +394,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedComunidadRoute: AuthenticatedComunidadRouteWithChildren,
   AuthenticatedCrearRoute: AuthenticatedCrearRoute,
   AuthenticatedEmpresaRoute: AuthenticatedEmpresaRoute,
+  AuthenticatedMiGenteRoute: AuthenticatedMiGenteRoute,
   AuthenticatedMisPlanesRoute: AuthenticatedMisPlanesRoute,
   AuthenticatedOnboardingRoute: AuthenticatedOnboardingRoute,
   AuthenticatedPerfilRoute: AuthenticatedPerfilRoute,

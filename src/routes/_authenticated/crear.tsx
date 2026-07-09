@@ -20,6 +20,7 @@ function CreatePlan() {
   const [date, setDate] = useState("");
   const [time, setTime] = useState("");
   const [maxPeople, setMaxPeople] = useState(6);
+  const [recurring, setRecurring] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -28,23 +29,31 @@ function CreatePlan() {
     setErr(null);
     setLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("plans")
-        .insert({
+      const groupId = recurring ? crypto.randomUUID() : null;
+      const occurrences = recurring ? 6 : 1;
+      const rows = Array.from({ length: occurrences }).map((_, i) => {
+        const d = new Date(date + "T00:00:00");
+        d.setDate(d.getDate() + i * 7);
+        return {
           creator_id: userId,
           category,
           title,
           description,
           location,
-          date,
+          date: d.toISOString().slice(0, 10),
           time,
           max_people: maxPeople,
-        })
-        .select("id")
-        .single();
+          recurring_group_id: groupId,
+          recurrence: recurring ? "weekly" : null,
+        };
+      });
+      const { data, error } = await supabase
+        .from("plans")
+        .insert(rows)
+        .select("id");
       if (error) throw error;
-      await supabase.from("plan_participants").insert({ plan_id: data.id, user_id: userId });
-      navigate({ to: "/plan/$id", params: { id: data.id } });
+      await supabase.from("plan_participants").insert(data.map((r) => ({ plan_id: r.id, user_id: userId })));
+      navigate({ to: "/plan/$id", params: { id: data[0].id } });
     } catch (e: unknown) {
       setErr(e instanceof Error ? e.message : "Algo salió mal");
     } finally {
@@ -89,6 +98,10 @@ function CreatePlan() {
             <span>Aforo máximo:</span>
             <input type="number" min={2} max={50} value={maxPeople} onChange={(e) => setMaxPeople(Number(e.target.value))}
               className="bg-white/70 border-2 border-[var(--ink)]/20 rounded-md px-3 py-2 w-20" />
+          </label>
+          <label className="flex items-center gap-3 rounded-md px-3 py-2" style={{ backgroundColor: recurring ? "var(--muted)" : "transparent" }}>
+            <input type="checkbox" checked={recurring} onChange={(e) => setRecurring(e.target.checked)} className="w-4 h-4" />
+            <span>🔁 Se repite cada semana (crea las próximas 6 kedas)</span>
           </label>
           {err && <p className="text-red-700 text-sm text-center">{err}</p>}
           <RubberButton type="submit" disabled={loading}>{loading ? "…" : "Pinchar en el tablón"}</RubberButton>

@@ -149,9 +149,14 @@ function ProfilePage() {
             <p className="text-2xl font-bold">{points}</p>
           </div>
         </div>
-        <Link to="/recompensas" className="rubber-button text-sm inline-block mt-3" style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
-          🎁 Ver recompensas
-        </Link>
+        <div className="flex gap-2 mt-3">
+          <Link to="/recompensas" className="rubber-button text-sm flex-1 text-center" style={{ backgroundColor: "var(--pin)", color: "var(--pin-foreground)" }}>
+            🎁 Recompensas
+          </Link>
+          <Link to="/mi-gente" className="rubber-button text-sm flex-1 text-center" style={{ backgroundColor: "#FFFFFF", color: "var(--ink)" }}>
+            👥 Mi gente
+          </Link>
+        </div>
       </PaperNote>
 
       <PaperNote category="deporte" rotation={1}>

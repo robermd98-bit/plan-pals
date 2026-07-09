@@ -13,9 +13,11 @@ import { ArrowLeft, Send } from "lucide-react";
 type Plan = {
   id: string; creator_id: string; category: string; title: string; description: string;
   location: string; date: string; time: string; max_people: number; is_hosted: boolean; company_name: string | null;
+  recurring_group_id: string | null;
 };
 type Profile = { id: string; name: string; avatar_url: string | null };
 type Message = { id: string; sender_id: string; text: string; created_at: string };
+type Memory = { id: string; user_id: string; photo_url: string | null; text: string | null; created_at: string };
 
 export const Route = createFileRoute("/_authenticated/plan/$id")({
   component: PlanDetail,
@@ -32,6 +34,11 @@ function PlanDetail() {
   const [joined, setJoined] = useState(false);
   const [icebreaker, setIcebreaker] = useState(randomIcebreaker);
   const [plansCount, setPlansCount] = useState(0);
+  const [memories, setMemories] = useState<Memory[]>([]);
+  const [showAddMemory, setShowAddMemory] = useState(false);
+  const [memoryText, setMemoryText] = useState("");
+  const [memoryPhoto, setMemoryPhoto] = useState<File | null>(null);
+  const [savingMemory, setSavingMemory] = useState(false);
 
   useEffect(() => {
     setIcebreaker(randomIcebreaker());
@@ -60,6 +67,9 @@ function PlanDetail() {
       const { count } = await supabase.from("plan_participants")
         .select("*", { count: "exact", head: true }).eq("user_id", userId);
       setPlansCount(count ?? 0);
+
+      const { data: mems } = await supabase.from("plan_memories").select("*").eq("plan_id", id).order("created_at");
+      setMemories(mems ?? []);
     })();
   }, [id, userId]);
 
@@ -78,6 +88,8 @@ function PlanDetail() {
             setParticipants(profs ?? []);
           }
         })
+      .on("postgres_changes", { event: "INSERT", schema: "public", table: "plan_memories", filter: `plan_id=eq.${id}` },
+        (payload) => setMemories((prev) => [...prev, payload.new as Memory]))
       .subscribe();
     return () => { supabase.removeChannel(ch); };
   }, [id]);
@@ -99,6 +111,31 @@ function PlanDetail() {
     setJoined(true);
   }
 
+  async function addMemory(e: React.FormEvent) {
+    e.preventDefault();
+    if (!memoryText.trim() && !memoryPhoto) return;
+    setSavingMemory(true);
+    try {
+      let photo_url: string | null = null;
+      if (memoryPhoto) {
+        const ext = memoryPhoto.name.split(".").pop() || "jpg";
+        const path = `${userId}/${id}-${Date.now()}.${ext}`;
+        const { error: upErr } = await supabase.storage.from("memories").upload(path, memoryPhoto);
+        if (upErr) throw upErr;
+        const { data: pub } = supabase.storage.from("memories").getPublicUrl(path);
+        photo_url = pub.publicUrl;
+      }
+      await supabase.from("plan_memories").insert({ plan_id: id, user_id: userId, text: memoryText.trim() || null, photo_url });
+      setMemoryText("");
+      setMemoryPhoto(null);
+      setShowAddMemory(false);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "No se pudo guardar el recuerdo");
+    } finally {
+      setSavingMemory(false);
+    }
+  }
+
   if (!plan) return <div className="p-5 text-[var(--ink)]">Cargando…</div>;
 
   return (
@@ -115,6 +152,11 @@ function PlanDetail() {
       <div className="px-4">
         <PaperNote category={plan.category} rotation={-1}>
           <h2 className="text-3xl">{plan.title}</h2>
+          {plan.recurring_group_id && (
+            <span className="text-xs font-semibold px-2 py-0.5 rounded-full inline-block mt-1" style={{ backgroundColor: "var(--muted)" }}>
+              🔁 Keda recurrente, cada semana
+            </span>
+          )}
           <p className="text-sm mt-2">{plan.description}</p>
           <p className="text-sm mt-2">📍 {plan.location}</p>
           <p className="text-sm">📅 {formatDate(plan.date)} · {plan.time.slice(0,5)}</p>
@@ -151,6 +193,52 @@ function PlanDetail() {
           ))}
         </div>
       </div>
+
+      {joined && (
+        <div className="px-4 mt-4">
+          <div className="flex items-center justify-between mb-2">
+            <p className="text-[var(--ink)]/70 text-sm font-semibold">📸 Recuerdos del plan</p>
+            <button onClick={() => setShowAddMemory((v) => !v)} className="text-xs font-semibold" style={{ color: "var(--pin)" }}>
+              {showAddMemory ? "Cancelar" : "+ Añadir"}
+            </button>
+          </div>
+
+          {showAddMemory && (
+            <form onSubmit={addMemory} className="flex flex-col gap-2 mb-3 rounded-xl p-3" style={{ border: "1px solid var(--border)", backgroundColor: "var(--card)" }}>
+              <textarea
+                value={memoryText} onChange={(e) => setMemoryText(e.target.value)} maxLength={200} rows={2}
+                placeholder="Cuenta algo de este momento…"
+                className="bg-white/70 border-2 border-[var(--ink)]/20 rounded-md px-3 py-2 text-sm"
+              />
+              <input
+                type="file" accept="image/*"
+                onChange={(e) => setMemoryPhoto(e.target.files?.[0] ?? null)}
+                className="text-xs"
+              />
+              <RubberButton type="submit" disabled={savingMemory} className="text-sm">
+                {savingMemory ? "Guardando…" : "Guardar recuerdo"}
+              </RubberButton>
+            </form>
+          )}
+
+          {memories.length > 0 && (
+            <div className="flex gap-2 overflow-x-auto pb-2">
+              {memories.map((m) => {
+                const author = participants.find((p) => p.id === m.user_id);
+                return (
+                  <div key={m.id} className="shrink-0 w-40 rounded-xl overflow-hidden paper-shadow" style={{ border: "1px solid var(--border)", backgroundColor: "#FFFFFF" }}>
+                    {m.photo_url && <img src={m.photo_url} alt="" className="w-40 h-28 object-cover" />}
+                    <div className="p-2">
+                      <p className="text-[10px] font-semibold opacity-60">{author?.name ?? "Alguien"}</p>
+                      {m.text && <p className="text-xs mt-0.5">{m.text}</p>}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      )}
 
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 mt-2 space-y-2">
         {messages.map((m) => {
