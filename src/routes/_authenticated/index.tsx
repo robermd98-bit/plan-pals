@@ -142,11 +142,8 @@ function Discover() {
     if (filter !== "all") q = q.eq("category", filter);
     const { data: plans } = await q;
     const allPlans = plans ?? [];
-    const nearby = city ? allPlans.filter((p) => locationMatchesCity(p.location, city)) : allPlans;
-    const usingFallback = !!city && nearby.length === 0 && allPlans.length > 0;
-    setShowingOtherCities(usingFallback);
-    const scoped = usingFallback ? allPlans : nearby;
-    const filtered = scoped.filter((p) => !joinedIds.has(p.id));
+    setShowingOtherCities(false);
+    const filtered = allPlans.filter((p) => !joinedIds.has(p.id));
 
     // creators
     const ids = Array.from(new Set(filtered.map((p) => p.creator_id)));
